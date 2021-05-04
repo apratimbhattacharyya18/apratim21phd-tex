@@ -1,0 +1,181 @@
+\begin{figure*}[!t]
+    \centering
+    \begin{minipage}{0.6\textwidth}
+        \centering
+        \includegraphics[width=\textwidth, height = 7cm, keepaspectratio]{"models/two_stream"}
+    \end{minipage}
+    \caption{Two stream architecture for prediction of future pedestrian bounding boxes.}
+    \label{fig:modelarch}
+\end{figure*}
+
+
+
+In order to anticipate motion of people in real-world traffic scenes from on-board cameras, we propose a novel approach that conditions the  prediction of motion (\autoref{sec:pedestrian_motion}) of people on predicted odometry (\autoref{sec:odometry}). Moreover, our approach models both \emph{aleatoric} and \emph{epistemic} uncertainty. Our model (see \autoref{fig:modelarch}) consists of two specialized streams for prediction of pedestrian motion and odometry. The odometry specialist stream predicts the most likely future vehicle odometry sequence. The bounding box specialist stream consists of a novel Bayesian RNN encoder-decoder architecture to predict odomerty conditioned  distributions over pedestrian trajectories and to capture epistemic and aleatoric uncertainty. Bayesian probability theory provides us with a theoretically grounded approach to dealing with both types of uncertainties (\autoref{sec:uncertainty}). %Our predictive distribution is richer and takes the form of a Gaussian mixture to capture epistemic uncertainty. 
+%We base our model on RNN encoder-decoder architectures which are popular \cite{cho2014learning,sutskever2014sequence} for sequence to sequence learning tasks. 
+ 
+We start by describing the bounding box prediction stream of our model and introduce our novel Bayesian RNN encoder-decoder which provides theoretically grounded uncertainty estimates.
+
+\subsection{Prediction of Pedestrian Trajectories}\label{sec:pedestrian_motion}
+A bounding box corresponding to the $i^{th}$ pedestrian observed on-board a vehicle at time step $t$ can be described by the top-left and bottom-right pixel coordinates: $b_{i}^{t} = \left\{(x_{tl},y_{tl}),(x_{br},y_{br})\right\}$. We want to predict the distribution of future bounding box sequences $\text{B}_{\text{f}}$ (where $| \text{B}_{\text{p}}| = m$) of the pedestrian. We condition our predictions on the past bounding box sequence $\text{B}_{\text{p}}$, the past odometry sequence $\text{O}_{\text{p}}$ and the corresponding future odometry sequence $\text{O}_{\text{f}}$ of the vehicle. The future odometry sequence $\text{O}_{\text{f}}$ is predicted conditioned on the past odometry sequence $\text{O}_{\text{p}}$ and on-board visual observation. Odometry sequences consists of the speed $s^{t}$ and steering angle $d^{t}$ of the vehicle, that is, $o^{t} = (s^{t},d^{t})$ at time-step $t$.
+\begin{align*}
+    p(\text{B}_{\text{f}} = [ b_{i}^{t+1}&, ... , b_{i}^{t+n}] \; \mid \; \text{B}_{\text{p}}, \text{O}_{\text{p}}, \text{O}_{\text{f}} ) \\
+    \text{B}_{\text{p}} &= [ b_{i}^{t-m}, ... , b_{i}^{t} ],\;\\
+    \text{O}_{\text{p}} &= [  o^{t-m}, ... ,o^{t} ], \; \\
+    \text{O}_{\text{f}} &= [ o^{t+1}, ... ,o^{t+n}] 
+\end{align*}
+
+ The variance of the predictive distribution $p(\text{B}_{\text{f}} | \text{B}_{\text{p`}})$ provides a measure of the associated uncertainty.
+
+ We will describe a basic sequence to sequence RNN first and then extend it to predict distributions and provide uncertainty estimates. Our  sequence to sequence RNN (\autoref{fig:modelarch}) consists of two embedding layers, an encoder RNN and a decoder RNN. The input sequence consists of the concatenated past bounding box and odometry sequences $\text{B}_{\text{p}}, \text{O}_{\text{p}}$. The input embedding layer embeds the inputs sequence $x_{t}$ into the representation $\hat{x}_{t}$.  This embedded  sequence is read by the encoder RNN ($\operatorname{RNN}_{\text{enc}}$) which produces a summary vector $v_{bbox}$. This summary vector is concatenated with predicted odometry $\text{O}_{\text{f}}$ and this summary sequence is embedded using the second embedding layer. This embedded summary sequence $\hat{v}$ (containing information about past pedestrian motion and future vehicle odometry) is used by the decoder RNN ($\operatorname{RNN}_{\text{dec}}$) for prediction. 
+
+In the following, we extend this model to predict distributions and estimate uncertainty.
+
+\iffalse
+We can obtain such a point estimate through a linear transformation of the hidden state of the decoder RNN.
+\begin{align}\label{eq12}
+    \begin{split}
+        h_{\text{dec}}^{t+n} &= \text{RNN}_{\text{dec}}(h_{\text{dec}}^{t+n-1}, v_{bbox}) \\ 
+        \hat{b}_{i}^{t+n} &= W_{bbox} * h_{\text{dec}}^{t+n} + bias_{bbox}.
+    \end{split}
+\end{align}
+\fi
+
+
+\subsection{Bayesian of Modelling of Uncertainty}\label{sec:uncertainty}
+We phrase our novel RNN encoder-decoder model in a Bayesian framework \cite{kendall2017uncertainties}. We capture epistemic (model) uncertainty by inferring posterior distribution of models (here models are RNN encoder-decoders with varying parameters) $p(f | X,Y)$ likely to have generated our data $\left\{ X, Y\right\}$, given the prior belief of the distribution of RNN encoder-decoders $p(f)$. The predictive probability over the future sequence $\text{B}_{\text{f}}$ given the past sequence  $\text{B}_{\text{p}}$ is obtained by marginalizing over the posterior distribution of RNN encoder-decoders,
+\begin{align}\label{eq1}
+p(\text{B}_{\text{f}} | \text{B}_{\text{p}}, X, Y) = \int p(\text{B}_{\text{f}} | \text{B}_{\text{f}}, f) p(f | X, Y) df
+\end{align}
+
+However, the integral in (\ref{eq1}) is intractable. But, we can approximate it in two steps \cite{Gal2016Bayesian,gal2016theoretically,kendall2017uncertainties}. First, we assume that our RNN encoder-decoder models can be described by a finite set of variables $\omega$. Thus, we constrain the set of possible RNN encoder-decoders to ones that can be described with $\omega$. Now, (\ref{eq1}) can be equivalently written as, 
+\begin{align}\label{eq2m1}
+p(\text{B}_{\text{f}} | \text{B}_{\text{p}}, X, Y) = \int p(\text{B}_{\text{f}} | \text{B}_{\text{p}}, \omega) p(\omega | X, Y) d\omega
+\end{align}
+
+Second, we assume an approximating variational distribution $q(\omega)$ which allows efficient sampling,
+\begin{align}\label{eq2}
+q(\text{B}_{\text{f}} | \text{B}_{\text{p}}) = \int p(\text{B}_{\text{f}} | \text{B}_{\text{p}}, \omega) q(\omega) d\omega
+\end{align}
+
+We choose the set of weight matrices $\left\{ W_{1},..,W_{L}\right\}\in\mathcal{W}$ of our RNN enocder-decoder as the set of variables $\omega$. Then we define an approximating Bernoulli variational distribution $q(\omega)$ over the columns $w_{k}^{c}$ of the weight matrices $W_{k} \in \mathcal{W}$,
+\begin{align}\label{eq4}
+    \begin{split}
+        &q(W_{k}) = M_{k} \cdot \text{diag}(\lbrack z_{i,j}\rbrack^{C_{k}}_{j=1})\\
+        z_{i,j} = &\;\text{Bernoulli}(p_{i}), i = 1, ..., L, j = 1, ..., K_{i - 1}.
+    \end{split}
+\end{align}
+where, $M_{k}$ are the variational parameters. This distribution allows for efficient sampling during training and testing which we discuss in the following subsection.
+
+For an accurate approximation, we minimize the KL divergence between $q(\omega)$ and the true posterior $p(\omega | X,Y)$ as the training step. It can be shown that, (as in \cite{gal2016dropout,Gal2016Bayesian}),
+\begin{align}\label{eq3}
+    \begin{split}
+        \text{KL}(q(\omega) & \mid\mid p(\omega | X,Y)) \propto \,\text{KL}(q(\omega)\mid\mid p(\omega)) \\
+        - &\sum_{t} \int q(\omega) \log p(b_{t}^{t+n} | b_{t}^{t+n-1}, \text{B}_{\text{p}}, \omega) d\omega.
+    \end{split}
+\end{align}
+The first part corresponds to the distance to the prior model distribution and the second to the data fit. During training and prediction, we use Monte-Carlo integration to approximate the integrals (\ref{eq2}) and (\ref{eq3}) (see \autoref{ssec:cl}).
+
+Aleatoric uncertainty can be captured along with epistemic uncertainty, by assuming a distribution of observation noise and estimating the sufficient statistics of the distribution. Here, we assume it to be a 4-d Gaussian at each time-step, $\mathcal{N}(b_{i}^{t+n},\Sigma_{i}^{t})$, where, $\Sigma=\text{diag}\big((\sigma_{x}^{t+n})_{i},(\sigma_{y}^{t+n})_{i},(\sigma_{x}^{t+n})_{i},(\sigma_{y}^{t+n})_{i}\big)$ in x and y directions in pixel space at time-step $t+n$. The predictive distribution of models parametrized by $\omega$ in our distribution $p( \omega | X, Y )$ is Gaussian at every time-step and complete the predictive distribution $p(\text{B}_{\text{f}} | \text{B}_{\text{p}}, X, Y)$ takes the form of a mixture of Gaussians at every time-step. 
+
+Uncertainty is the variance of our predictive distribution (\ref{eq2}) and can be obtained through moment matching \cite{gal2016dropout,kendall2017uncertainties}. If we have $T$ samples of future pedestrian bounding box sequences $\hat{\text{B}}_{\text{f}}$, with corresponding samples from the RNN encoder-decoder, the total uncertainty at time-step $t$ is,  
+\begin{align}\label{eq6}
+\begin{split}
+\frac{1}{T} \Big( \sum_{i=1}^{T} (\hat{b}^{t}_{i})^\intercal \hat{b}^{t}_{i} - \frac{1}{T} \big( \sum_{i=1}^{T} (\hat{b}^{t}_{i})^\intercal \big) \big( \sum_{i=1}^{T} \hat{b}^{t}_{i} \big) \Big) \\+ \frac{1}{T} \Big( \sum_{i=1}^{T} (\hat{\sigma}_{i}^{t})_{x} +\sum_{i=1}^{T} (\hat{\sigma}_{i}^{t})_{y} \Big).
+\end{split}
+\end{align}
+The first part of the sum correspond to the epistemic uncertainty $u_{i}^{e}$ and the second part corresponds to the aleatoric uncertainty $u_{i}^{a}$. We average the uncertainty across time-steps to arrive at the complete uncertainty estimate.
+\iffalse
+The predictive distribution can be evaluated by measuring the probability assigned to the true $y^{*}$ (true $\text{B}_{\text{future}}$) using the negative log-likelihood ($\operatorname{\mathcal{L}}$) metric \cite{gal2016dropout},
+\begin{align}
+\operatorname{\mathcal{L}}(y^{*}) = -\log(\frac{1}{T}\sum_{i=1}^{T} p(y^{*} | x^{*}, \hat{\omega}_{i} )),\; \hat{\omega}_{i} \sim q(\omega).
+\end{align}
+\fi
+Next, we describe how we sample from the Bernoulli distribution of RNN encoder-decoder weight matrices and the final sampling from the predictive distribution $p(\text{B}_{\text{f}} | \text{B}_{\text{p}}, \text{O}_{\text{p}}, \text{O}_{\text{f}} )$.
+
+\subsection{Bayesian RNN Encoder-Decoder}
+The RNN encoder-decoder model of \autoref{sec:pedestrian_motion} contains four weight matrices. In detail, the two embedding layers contains two weight matrices $W_{emi},W_{ems}$. The other two weight matrics belong to the encoder and decoder RNNs. We use an LSTM formulation as RNNs. Following \cite{graves2013speech} the weight matrices of an LSTM can be concatenated into a matrix $W$ and the LSTM can be formulated as in, 
+\begin{align}\label{eq7}
+    \begin{split}
+        \begin{pmatrix} \underline{i} \\ \underline{f} \\ \underline{o} \\ \hat{\underline{c}} \end{pmatrix}
+        = \begin{pmatrix} \text{sigm} \\ \text{sigm} \\ \text{sigm} \\ \text{tanh} \end{pmatrix}
+        \begin{pmatrix} {\begin{pmatrix} \hat{x}_{t} \\ h_{t - 1}  \end{pmatrix}} \cdot W \end{pmatrix}\\
+        c_{t} = \underline{f} \odot c_{t-1} + \underline{i} \odot \hat{\underline{c}}\;, \;\;\; h_{t} = \underline{o} \odot \text{tanh}(c_{t})
+    \end{split}
+\end{align}
+
+%are fully-connected with non-linearities. Therefore, the linear transformations ($\hat{x}_{t} = x_{t} \cdot W_{emi}$) are repeated over all time-steps of the input sequence and summary sequence
+
+where ${\underline{i}}$ is the input gate, ${\underline{f}}$ is the forget gate, ${\underline{o}}$ is the output gate, ${c_{t}}$ is the cell state, ${\hat{\underline{c}}}$ is the candidate cell state and ${h_{t}}$ is the hidden state. 
+
+%The encoder LSTM with weight matrix $W_{enc}$ reads in the embedded input sequence by applying (\ref{eq7}) recurrently at each time step. The hidden state $h_{t}$ at the end of reading the input sequence is the summary vector $v_{bbox}$ (\autoref{fig:modelarch}). The decoder LSTM with weight matrix $W_{dec}$ reads the embedded summary $v_{bbox}$ as the input at every time-step and recurrently applies (\ref{eq7}).
+
+We define the Bernoulli variational distribution $q(\omega)$ (as in (\ref{eq4})) over the union of all the weight matrices of our model,
+\begin{align}\label{eq8}
+\omega = \left\{ W_{emi}, W_{ems}, W_{enc}, W_{dec} \right\}.
+\end{align}
+where, $W_{enc},W_{dec}$ are the weight matrices of our RNN encoder and decoder.
+
+Sampling from $q(W_{emi}),q(W_{ems})$ can be done efficiently by sampling random Bernoulli masks $z_{emi},z_{ems}$ and applying these masks after the linear transformations. In case of the input embedding,
+\begin{align}\label{eq9}
+\hat{x}_{t} = (x_{t} \cdot W_{emi}) \odot z_{emi}
+\end{align}
+Similarly, it was shown in \cite{gal2016theoretically} sampling weight matrices of a LSTM (here, $q(W_{enc}),q(W_{dec})$) can be efficiently performed by sampling random Bernoulli masks $z_{x},z_{h}$ and applying them at each time-step, while the LSTM encoder and decoder are unrolled,
+\begin{align}\label{eq10}
+\begin{pmatrix} \underline{i} \\ \underline{f} \\ \underline{o} \\ \hat{\underline{c}} \end{pmatrix}
+= \begin{pmatrix} \text{sigm} \\ \text{sigm} \\ \text{sigm} \\ \text{tanh} \end{pmatrix}
+\begin{pmatrix} {\begin{pmatrix} x_{t} \odot z_{x} \\ h_{t - 1} \odot z_{h}  \end{pmatrix}} \cdot W \end{pmatrix}
+\end{align}
+
+Sampling from our predictive distribution $p( \text{B}_{\text{future}} |  \text{B}_{\text{past}}, \text{O}_{\text{future}}, \text{O}_{\text{past}} )$ is done by first sampling weights matrices of our Bayesian RNN encoder-decoder. Then the parameters of the Gaussian observation noise distribution at each time-step is predicted. For this, we use the hidden state sequence $h_{\text{dec}}^{t}$ of the $\operatorname{RNN}_{\text{dec}}$ and an additional linear transformation,
+\begin{align*}
+    \begin{split}
+        h_{\text{dec}}^{t+n} &= \text{RNN}_{\text{dec}}(h_{\text{dec}}^{t+n-1}, v_{bbox}; z_{x}, z_{h}) \\ 
+        \hat{b}_{i}^{t+n},\;(\hat{\sigma_{i}}^{t+n})_{x},\;&(\hat{\sigma}_{i}^{t+n})_{y} = W_{bbox} * h_{\text{dec}}^{t+n} + bias_{bbox}.
+    \end{split}
+\end{align*}
+We then sample from the predicted Gaussian distribution. 
+
+\iffalse
+Thus, our predictive distribution factorizes over time-steps and the predictive distribution at time $t+n$ is conditioned upon the summary vector $v_{bbox}$ (thus $\text{B}_{\text{past}}$), the predicted odometry and the distribution at the previous time-step. \mario{you always talk about ``can'' in the previous paragraph. say what you do - otherwise it is perceived as optional}
+\fi
+
+Next, we describe the second stream of our two-stream model -- our model for long-term odometry prediction.
+
+\subsection{Prediction of Odometry}\label{sec:odometry}
+We use a similar RNN encoder-decoder architecture used for bounding box prediction, but without the embedding layers. We do not place a distribution over the weights but learn a single point estimate. We condition the predicted sequence $\text{O}_{\text{f}}$ on the past odometry sequence $\text{O}_{\text{p}}$ and last visual observation on-board the vehicle. The past odometry $\text{O}_{\text{past}}$ is input to an encoder RNN which produces a summary vector $v_{odo}$. The past odometry of the vehicle $\text{O}_{\text{p}}$ gives a strong cue about the future velocity especially in the short term ($\sim$100ms). We use the same LSTM formulation described previously as the RNN encoder; with the final hidden state $h^{t}$ as the summary. The last visual observation can help in the longer term prediction of odometry; e.g. visual cues about bends in the road, obstacles etc. Similar to \cite{xu2016end,bojarski2016end} we employ a convolutional neural network (CNN-encoder) to embed the visual information provided by the currently observed frame; a visual summary vector $v_{vis}$. Next we describe our CNN-encoder architecture.
+
+\myparagraph{CNN-encoder.}
+Our CNN-encoder should extract visual features to improve longer-term (multi-step versus single-step in \cite{xu2016end,bojarski2016end}) prediction. Therefore, we use a more complex CNN compared to \cite{bojarski2016end} and during training we learn the parameters from scratch, unlike \cite{xu2016end} which uses a pre-trained VGG network. Our CNN-encoder has 10 convolutional layers with \emph{ReLU} non-linearities. We use a fixed, small filter size of 3x3 pixels. We use max-pooling after every two layers. After max-pooling we double the number of convolutional filters; we use \{32,64,128,256,512\} convolutional filters. The convolutional layers are followed by three fully connected layers with 1024, 256 and 128 neurons and \emph{ReLU} non-linearities. The output of the last fully connected layer is the visual summary $v_{vis}$.
+
+The odometry and visual summary vectors  are concatenated $v = \left\{ v_{odo}, v_{vis}\right\}$ and read by the RNN decoder ($\operatorname{RNN}_{\text{dec}}$). We use the same LSTM formulation described previously as the RNN-decoder. As before, the hidden state of the LSTM decoder is used for predicting the future odometry sequence through a linear transformation.
+\begin{align*}
+    h_{\text{dec}}^{t+n} &= \text{RNN}_{\text{dec}}(h_{\text{dec}}^{t+n-1}, \left\{v_{odo},v_{vis}\right\}) \\ 
+    o_{i}^{t+n} &= W_{odo} * h_{\text{dec}}^{t+n} + bias_{odo}.
+\end{align*}
+We next describe training and inference in the complete two-stream model is trained.
+
+\subsection{Training and Inference}\label{ssec:cl} 
+\myparagraph{Training.} The two streams are trained separately. As the odometry prediction stream predicts point estimates, it is trained first by minimizing the MSE over the training set. The Bayesian bounding-box prediction stream is trained by estimating (Monte-Carlo) and minimizing the KL divergence of its approximate weight distribution $q(\omega)$ (\ref{eq3}). More specifically, 
+\begin{enumerate*}
+    \item We sample a mini-batch of size $T$ of examples from the training set.
+    \item For each example, weights $\left\{ W_{emi}, W_{ems}, W_{enc}, W_{dec} \right\}$ are sampled from $q(\omega)$ (\ref{eq8}), by sampling Bernoulli masks as in (\ref{eq9}) and (\ref{eq10}).
+    \item For each example, the predicted means $\hat{\text{B}}_{\text{f}}$ and variances $\hat{\sigma}$ of the heteroscedastic models parameterized by $\omega$ are inferred.
+    \item The KL divergence (\ref{eq3}) can be equivalently minimized by (similar to \cite{gal2016dropout,kendall2017uncertainties}) the following loss,
+\end{enumerate*}
+\begin{align*}
+    \begin{split}
+        \Big(\, \frac{1}{4 \, n \, N} \sum_{i=1}^{N} \sum_{j=1}^{n}  \lVert \hat{b}_{i}^{t+j} - b_{i}^{t+j} \lVert_{2}^{2} \, (\hat{\Sigma}_{i}^{t})^{-2} \, \Big) + \lambda \lVert \mathcal{W} \rVert_{2} + \log \hat{\sigma}_{i}^{2}
+    \end{split}
+\end{align*}
+where, $\mid \text{B}_{\text{f}}\mid = n$ and N pedestrians. The left part is the equivalent of the negative log likelihood term in (\ref{eq3}). The middle part is weight regularization parameterized by $\lambda$, equivalent to the KL term in (\ref{eq3}). The right part is additional regularization as in \cite{kendall2017uncertainties}, to ensure finite predicted variance. 
+
+The ADAM optimizer \cite{kingma2014adam} is used during training. For training sequences longer than $| \text{B}_{\text{p}}| + | \text{B}_{\text{f}}|$ ($| \text{O}_{\text{p}} + \text{O}_{\text{f}}|$ respectively) we use a sliding window to convert to multiple sequences. Moreover, as the sequences in the training set are of varying lengths, 
+%with longer sequences rarer than shorter sequences, 
+we use a curriculum learning (CL) approach. We fix the length of the conditioning sequence $| \text{B}_{\text{p}}|,| \text{O}_{\text{p}}|$ and train for increasing longer time horizons $| \text{B}_{\text{f}}|,| \text{O}_{\text{f}}|$ (initializing the model parameters with those for shorter horizons). This allows us to train on a larger part of the Cityscapes training set (also on sequences shorter than $| \text{B}_{\text{p}}| + | \text{B}_{\text{f}}|$ of the final model) and leads to faster convergence.
+
+\myparagraph{Inference.} Given a bounding box sequence $\text{B}_{\text{p}}$ and corresponding odometry sequence (and visual observation), the odometry prediction stream is first used to predict $\text{O}_{\text{f}}$. We sample from the predictive distribution (\ref{eq2}) by, 
+\begin{enumerate*}
+\item Sampling the weight matrices $\left\{ W_{emi}, W_{ems}, W_{enc}, W_{dec} \right\}$ of the Bayesian bounding box prediction stream from the (learned) approximate distribution $q(\omega)$, by sampling Bernoulli masks as in (\ref{eq9}) and (\ref{eq10}),
+\item The $\text{RNN}_{\text{dec}}$ is unrolled to obtain a sample $\left\{ \text{B}_{\text{f}}, \hat{\sigma}_{x}, \hat{\sigma}_{y} \right\}$.
+\end{enumerate*}
+The associated uncertainty is obtained using multiple samples as in (\ref{eq6}).

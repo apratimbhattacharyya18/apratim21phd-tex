@@ -1,0 +1,298 @@
+We evaluate our CMSC model on natural video sequences involving agent-based motion and billiard sequences with only physics-based motion\footnote{At time of publication, data and models will be made publicly available.}. We compare with various baselines and perform ablation studies to confirm design choices. We convert each video into 32x32 pixel patches. The CMSC model observes a central patch and eight neighbouring patches resulting in a context of size 96x96 pixels. 
+
+\begin{figure*}[!t]
+    \centering
+    \begin{minipage}{0.34\textwidth}
+    \includegraphics[width = \textwidth]{"aucvsb100"}
+    \caption{Area under the curve.}
+    \label{fig:aucvsb100}
+    \end{minipage}
+    \begin{minipage}{0.34\textwidth}
+    \includegraphics[width =\textwidth]{"bestfvsb100"}
+    \caption{Best F-measure.}
+    \label{fig:bestfvsb100}
+    \end{minipage}
+    \begin{minipage}{0.3\textwidth}
+    \centering
+        \begin{minipage}{\linewidth}
+        \centering
+        \includegraphics[width = 0.65\textwidth]{"sharpness"}
+        \caption{Laplacian measure.}
+        \label{fig:shapness}
+        \end{minipage}
+        \begin{minipage}{\linewidth}
+        \centering
+        \includegraphics[width = 0.65\textwidth]{"mse"}
+        \caption{Mean squared error.}
+        \label{fig:mse}
+        \end{minipage}
+    \end{minipage}
+    \caption{Left and center: Evaluation of boundary prediction on VSB100. Right: RGB versus boundary prediction.}
+\end{figure*}
+
+\begin{figure*}[t]
+  
+  \centering
+  \begin{tabular}{ cccc }
+     
+    \includegraphics[width=0.21\textwidth]{"fig4/1_gt"} &
+    \includegraphics[width=0.21\textwidth]{"fig4/1_t_1"} &
+    \includegraphics[width=0.21\textwidth]{"fig4/1_t_2"} &
+    \includegraphics[width=0.21\textwidth]{"fig4/1_t_4"} \\
+     \addlinespace[-3.4ex]
+    \includegraphics[width=0.21\textwidth]{"fig4/2_gt"}&
+    \includegraphics[width=0.21\textwidth]{"fig4/2_t_1"}&
+    \includegraphics[width=0.21\textwidth]{"fig4/2_t_2"}&
+    \includegraphics[width=0.21\textwidth]{"fig4/2_t_4"}\\
+    
+    Last Observation: $t$ & Prediction: $t$ + 1 & Prediction: $t$ + 2 &  Prediction: $t$ + 4 \\
+    
+    \end{tabular}
+  \caption{Rows top to bottom: Prediction on \emph{airplane} and \emph{hummingbird} sequences from VSB100. Correct boundaries predictions are encoded in green. Missed boundaries are encoded in yellow. Wrong boundaries are encoded in red.}
+  \label{fig:cframes}
+\end{figure*}
+
+\myparagraph{Training Loss.} We use L2 loss (mean square error) during training, which we optimize using the ADAM optimizer. 
+
+\myparagraph{Evaluation Metric.} As we want sharp and accurate boundaries, we use the established boundary precision recall (BPR) evaluation metric from the video segmentation literature \cite{galasso2013unified}. This metric is defined for a set $P$ of predicted boundary images and $G$ of corresponding ground truth boundary images as,
+%
+\begin{align*}
+    P &= \frac{ \sum_{B_{p} \in P, B_{g} \in G} \mid B_{p} \cap B_{g} \mid }{\sum_{B_{p} \in P} \mid B_{p} \mid}\\
+    R &= \frac{ \sum_{B_{p} \in P, B_{g} \in G} \mid B_{p} \cap B_{g} \mid }{\sum_{B_{g} \in G} \mid B_{g} \mid}\\
+    F &= \frac{2 PR}{P + R},
+\end{align*}
+where $P$ is boundary precision, $R$ is boundary recall and $F$ is the combined F-measure. As we are interested in accurate predictions, predicted boundary pixels should be at most 1 pixel away from ground-truth boundary pixels to be correct.
+
+\subsection{Evaluation on Natural Video Sequences Involving Agent-based Motion.}
+\myparagraph{Dataset and Training.}
+We use the VSB100 dataset which contains 101 videos with a maximum 121 frames each.  The training set consists of 40 videos and the test set consists of 60 videos. The videos contain a wide range of objects of different sizes and shapes, including vehicles, humans and animals. The videos also have a wide variety of both object and camera motion. We use the hierarchical video segmentation algorithm in \cite{khoreva2016improved} to segment these videos. The output is a ultra-metric contour map (ucm). Boundaries higher in the hierarchy typically correspond to semantically coherent entities like animals, vehicles etc and therefore their motion corresponds to object/camera motion.  We discard boundaries belonging to the lowest level of the hierarchy (corresponding to an over-segmentation), as they are temporally very unstable. We use the ucm hierarchy as a confidence measure on boundary location at a pixel.
+
+\myparagraph{Experimental Settings and Baselines.} \label{par:mb}
+The models are trained to predict boundaries of segmented VSB100 videos. Recall that, the ground-truth boundaries (ucm) in VSB100 have different confidence values. Thus, we threshold the predictions before comparison to the groundtruth. We vary the threshold to obtain a precision-recall curve and report the area under the curve (AUC) along with the best F-measure across all thresholds. We include a ``Last Input'' baseline by using the last input frame as constant prediction and a ``Optical flow'' baseline. As many boundaries do not change between frames in the videos of VSB100, the last input is a strong baseline especially when we are predicting one step into the future. In case of the optic flow baseline, the optic flow is calculated between the last two input frames (at $t$ - 1 and $t$) using the Epic flow method of \cite{revaud2015epicflow}. The boundary pixels at time $t$ are propagated using the calculated flow to generate predictions at $t$ + 1 to $t$ + 8.
+
+\myparagraph{Results on VSB100.}
+We perform an ablation study of our CMSC model and we compare to, \begin{enumerate*} \item A convolutional single scale model (CSS) \item A convolutional multi-scale model (CMS) \end{enumerate*}, in addition to the baselines. Both models do not have a context. We report the quantitative results in \autoref{fig:aucvsb100} and \autoref{fig:bestfvsb100} and the qualitative results in \autoref{fig:cframes}. \\
+{\textit{Quantitative evaluation:} } In the short term the CMS model (green lines) performs well. However, our CMSC (red lines) performs best in the longer term (both having the same number of parameters). This demonstrates the importance of the context for long-term prediction. The good performance of both of the mutli-scale models (CMS and CMSC) versus the single scale CSS model, shows that multiple scales lead to more accurate predictions. The performance advantage of our CMSC model over the last input baseline shows that the model learns to predict boundaries of moving objects while keeping static boundaries intact. The recall of the CMSC model declines with time as the future becomes increasingly uncertain. The poor performance of the ``Optic flow'' baseline is due to inaccurate flow information at object boundaries.   \\
+{\textit{Qualitative evaluation:} } The boundaries produced by our CMSC model are sharp whenever the motion is smooth, e.g. the predictions in \autoref{fig:cframes}. However, the models are not able to deal with high uncertainty in the long-term often due to non-deterministic motion. The models in such situations react by blurring the boundaries, as a consequence of using the L2 training loss. While predicting recursively, this leads to loss of boundary confidence and eventual vanishing boundaries. The ``Optic flow'' baseline produces discontinuous (jagged) boundaries. (See Suppmat for more examples). Next we evaluate and compare RGB prediction to boundary prediction.
+
+\myparagraph{RGB verses Boundary Prediction.}
+We report the sharpness of RGB frames (of VSB100) predicted by the adversarial model of \cite{mathieu2015deep} (fine-tuned on VSB100) using the Laplacian measure \cite{krotkov2012active} in \autoref{fig:shapness}. The Laplacian measure pools the gradient information of the image. We observe that the model of \cite{mathieu2015deep} makes increasingly blurry predictions into the future. We also compare the mean squared error of RGB predictions of \cite{mathieu2015deep} and predicted boundaries of our CMSC model in \autoref{fig:mse}. We see a sharper increase in the error of RGB predictions compared to boundaries in the long term.
+
+  \begin{table}[h]
+  \setlength{\tabcolsep}{3pt}
+  \centering
+  \begin{tabular}{@{}ccccc@{}}\\
+    \toprule
+    \textbf{Step}  &\textbf{Last Input} &\textbf{CMS} &\textbf{CMSC-BL} &\textbf{CMSC}  \\
+    \hline 
+    $t$ + 1      &0.141 &0.282 & 0.957  &\textbf{0.987} \\
+    $t$ + 5      &0.038 &0.101 & 0.841  &\textbf{0.900} \\
+    $t$ + 20     &0.002 &0.066 & 0.347  &\textbf{0.632} \\
+    \bottomrule
+  \end{tabular}
+  \caption{Evaluation on single ball billiard table worlds.}
+  \label{bf_one}
+\end{table}
+
+ \begin{table*}[t]
+  \centering
+    %\setlength{\tabcolsep}{2pt}
+  \begin{tabular}{@{}ccccccc@{}}\\
+\toprule
+    & \multicolumn{3}{c}{ -- {\bf Evaluation on three ball worlds} -- } & \multicolumn{3}{c}{ -- {\bf Evaluation on six ball worlds} -- }                \\
+     \textbf{Step} & \textbf{Last Input} & \textbf{CMSC-2B}  & \textbf{CMSC} & \textbf{Last Input} & \textbf{CMSC-3B}  & \textbf{CMSC}  \\
+    \hline 
+    $t$ + 1      &0.246  &0.967 &\textbf{0.968} &0.250  &0.962 &\textbf{0.964} \\
+    $t$ + 5      &0.118  &0.890 &\textbf{0.892} &0.130  &\textbf{0.875} &0.866\\
+    $t$ + 20     &0.090  &0.664 &\textbf{0.700} &0.115  &0.511 &\textbf{0.600}\\
+    \bottomrule
+  \end{tabular}
+    \caption{Evaluation on complex billiard table worlds.}
+  \label{bf_mult}
+\end{table*}
+
+\begin{figure*}[t]
+    \centering
+  \begin{tabular}{ cccccccc }
+        \includegraphics[width=0.10\textwidth]{"trails/trail1"} &   
+        \includegraphics[width=0.10\textwidth]{"trails/trail2"} &
+        \includegraphics[width=0.10\textwidth]{"trails/trail3"} &
+        \includegraphics[width=0.10\textwidth]{"trails/trail4"} &
+        \includegraphics[width=0.10\textwidth]{"trails/trail5"} &   
+        \includegraphics[width=0.10\textwidth]{"trails/trail6"} &   
+        \includegraphics[width=0.10\textwidth]{"trails/trail7"} &   
+        \includegraphics[width=0.10\textwidth]{"trails/trail8"} \\ 
+        \end{tabular}
+    \caption{Trails produced by super-imposing predicted boundaries on synthetic sequences.}
+    %\vspace{-10pt}
+    \label{fig:trails}
+\end{figure*}
+\begin{figure*}[h!]
+  
+  \centering
+  \begin{tabular}{ cccc }
+    
+    \includegraphics[width=0.18\textwidth]{"fig5/real_trail4"} &
+    \includegraphics[width=0.18\textwidth]{"fig5/real_trail1"} &
+    \includegraphics[width=0.18\textwidth]{"fig5/real_trail2"}&
+    \includegraphics[width=0.18\textwidth]{"fig5/real_trail3"} \\
+    
+    Trail up to $t$ + 20 & Trail up to $t$ + 20 &  Trail up to $t$ + 50 &  Trail up to $t$ + 50 \\
+    
+    \end{tabular}
+  \caption{Trails produced by super-imposing predicted boundaries on real sequences. }
+  \label{fig:bframes}
+\end{figure*}
+
+
+\subsection{Evaluation on Physics-based Motion.}
+Motion in the videos in the VSB100 dataset is frequently very complex  as agent's actions quickly become non-deterministic and hence increasingly uncertain. Therefore, we also look at physics-based motion, which is still challenging yet it factors out the aforementioned issues. In this scenario, we evaluate the long-term prediction performance of the models on real and synthetic billiard ball sequences. We begin by describing our dataset.
+
+\myparagraph{Synthetic Data Generation.}
+The synthetic billiard ball sequences are sampled from worlds which consists of balls moving on a frictionless surface with a border, akin to a billiard table. We used pygame to create such worlds and sample boundary images from them. The output images contain  boundaries that can stem from ball(s) or the table and have binary confidence measure (indicating a boundary at that location). During evaluation, as the target is always a binary image, we report only the best F-measure obtained by thresholding the predicting boundary images and varying the threshold parameter. 
+\label{sssec:data_gen_syn}
+We sampled synthetic billiard sequences using the following parameters.
+\begin{enumerate*}
+    \item {\it Table size}: Side length randomly sampled from \{96,128,160,192,256\} pixels.
+    \item {\it Ball velocity}: Randomly sampled from [\{-3,..,3\},\{-3,..,3\}] pixels.
+    \item {\it Ball size}: Constant, with a radius of 13 pixels.
+    \item {\it Initial Position}: Uniformly over the table surface.
+\end{enumerate*}
+
+\myparagraph{Real Data Collection.}
+We captured a novel data-set of real billiard sequences on a mini-billiard table. Frame rate was set to 120 per second to minimize motion blur. Each sequence consists of an actor (not visible) striking the ball with a cue stick once. The motion in the sequences of the dataset are that of the cue stick and the balls. We produce boundary images using the method of \cite{Man+16a}.
+
+\myparagraph{Evaluation on synthetic single ball worlds.}
+We generate a training set using parameters in \autoref{sssec:data_gen_syn}. However, to keep our training set as diverse as possible we prefer short sequences. We restrict each sequence to a maximum length of one or two collisions with walls and set a 50\% bias of the initial position of the balls being 40 pixels from the walls. We sample 500 such sequences and train the models (from \autoref{sec:models}) on these sequences. We then test the models on 30 independent test sequences. We again include the ``last input'' baseline as a constant predictor . We also include a ``blind'' Convolutional multi-scale Context model (CMSC-BL), which cannot see the table borders. This is a strong baseline as starting from 42\% frames in the test set, there are no ball-wall collisions 20 steps into the future. To beat this baseline, our models need to learn the physics of ball-wall collisions.  We report the results in \autoref{bf_one}.
+
+Our CMSC model performs the best with accurate predictions 20 time-steps into the future -- also exceeding the ``blind'' version (CMSC-BL) that cannot handle ball-wall collisions. The model without a context CMS, produces inaccurate results at patch borders and thus suffers heavily especially at larger time-steps.
+
+\myparagraph{Evaluation on synthetic two and three ball worlds.}
+Worlds with more than one ball also involve harder to model physics of ball-ball collisions. To evaluate the models on such worlds we sample 100 training sequences each with two, three and six balls respectively with a maximum length of 200 frames. We use a curriculum learning approach \cite{bengio2009curriculum}, where we initialize the models with the weights learned on single, two and three ball worlds respectively.  We test the models on 30 independent sequences containing two, three and six balls respectively. We report the results in \autoref{bf_mult}. In each case, we also include CMSC models trained on single ball worlds (CMSC-1B), two ball worlds (CMSC-2B) and three ball worlds (CMSC-3B) respectively as baselines. To beat these strong baselines learning the physics of ball-ball collisions is necessary as in case of our two-ball and three-ball test sets, there are no ball-ball and 3-ball collisions 20 steps into the future for 92\% and 98\% of the starting frames (and no 6-ball collisions). Again, we see accurate prediction by the CMSC model even at 20 time-steps in the future.
+
+
+\myparagraph{Prediction over Very Long Time Scales.}
+Although we evaluate only 20 timesteps into the future in \autoref{bf_one} and \autoref{bf_mult}, our models are stable over longer time-horizons. In \autoref{fig:trails}, we predict 100 timesteps and visualize the boundary images by trails obtained by superposition. We notice a few failure cases where a ball reverse direction mid table and the ball(s) get deformed or disappear. 
+
+\begin{table}[h]
+\vspace{-0.5cm}
+  \centering
+  \resizebox{\linewidth}{!}{
+    \begin{tabular}{@{}ccccc@{}}\\
+  \toprule
+    \textbf{Step}  &\textbf{Last Input} &\textbf{CMSC} &\textbf{Last Input(M)} &\textbf{CMSC(M)}\\
+    \hline
+    $t$ + 1      &0.890 &0.850 &0.126 &0.570 \\ 
+    $t$ + 5      &0.855 &0.804 &0.085 &0.541 \\ 
+    $t$ + 20     &0.844 &0.746 &0.087 &0.497 \\ 
+    \bottomrule
+  \end{tabular}
+  }
+   \caption{Evaluation on real billiard sequences (M-masked).}
+  \label{bf_real}
+\end{table}
+
+
+ \begin{table*}[t]
+  \centering
+    %\setlength{\tabcolsep}{2pt}
+     \resizebox{\textwidth}{!}{
+  \begin{tabular}{@{}cccccccccc@{}}\\
+\toprule
+    &\multicolumn{2}{c}{-------- {\bf PSNR} --------} & \multicolumn{3}{c}{-------- {\bf Sharpness Loss} --------} & \multicolumn{3}{c}{-------- {\bf Laplacian Measure} --------}                \\
+    \midrule
+     \textbf{Step}  & \textbf{RGB prediction [1]} & \textbf{Fusion (Ours)} & \textbf{RGB prediction} & \textbf{De-blurring} & \textbf{Fusion (Ours)} & \textbf{RGB prediction} & \textbf{De-blurring} & \textbf{Fusion (Ours)}    \\
+     \midrule
+     \multicolumn{9}{c}{\bf VSB100} \\
+        \midrule 
+        $t$ + 2      &24.4 &\textbf{25.1} &18.5 &18.5 &\textbf{18.6} &0.142 &0.139 &\textbf{0.155}  \\
+        $t$ + 3      &22.2 &\textbf{23.1} &18.2 &18.2 &\textbf{18.3} &0.121 &0.109 &\textbf{0.127} \\
+        $t$ + 4      &20.4 &\textbf{22.3} &18.1 &18.1 &\textbf{18.2} &0.103 &0.114 &\textbf{0.118} \\
+        \midrule
+        
+    \multicolumn{9}{c}{\bf UCF101} \\
+        \midrule 
+        $t$ + 2      &26.5 &27.7 &\textbf{28.2} &21.4 &21.5 &\textbf{21.7} &0.101 &0.122 &\textbf{0.136} \\
+        $t$ + 3      &23.4 &25.1 &\textbf{25.2} &20.5 &20.8 &\textbf{20.9} &0.095 &0.093 &\textbf{0.102} \\
+        $t$ + 4      &21.4 &23.4 &\textbf{23.8} &20.4 &20.5 &\textbf{20.6} &0.089 &0.101 &\textbf{0.112} \\
+        \bottomrule
+  \end{tabular}}
+    \caption{Evaluation of our Fusion scheme. PSNR, Sharpness Loss and Laplacian measure: Higher is better. }
+  \label{tab:fusion}
+\end{table*}
+
+\begin{figure*}[t]
+  
+  \centering
+  \renewcommand{\arraystretch}{0.2}
+  \begin{tabular}{ ccccccccc }
+  \toprule
+  \scriptsize{\textbf{Timestep}} & \scriptsize{\textbf{RGB prediction}} & \scriptsize{\textbf{De-blurring}} &  \scriptsize{\textbf{Fusion (Ours)}} & \scriptsize{\textbf{Groundtruth}} & \scriptsize{\textbf{RGB prediction} } & \scriptsize{\textbf{De-blurring}} &  \scriptsize{\textbf{Fusion (Ours)}} & \scriptsize{\textbf{Groundtruth}} \\
+  \midrule
+   t + 2 &
+    \includegraphics[width=0.110\textwidth, height=0.055\textheight]{"fig_new_sharp/vsb100/t_2/4_baseline"} &
+    \includegraphics[width=0.110\textwidth, height=0.055\textheight]{"fig_new_sharp/vsb100/t_2/4_pred"} &
+    \includegraphics[width=0.110\textwidth, height=0.055\textheight]{"fig_new_sharp/vsb100/t_2/4_sharp"} &
+    \includegraphics[width=0.110\textwidth, height=0.055\textheight]{"fig_new_sharp/vsb100/t_2/4_true"} &
+    \includegraphics[width=0.110\textwidth, height=0.055\textheight]{"fig_new_sharp/vsb100/t_2/2_blurry"}&
+    \includegraphics[width=0.110\textwidth, height=0.055\textheight]{"fig_new_sharp/vsb100/t_2/2_baseline"}&
+    \includegraphics[width=0.110\textwidth, height=0.055\textheight]{"fig_new_sharp/vsb100/t_2/2_sharp"}&
+    \includegraphics[width=0.110\textwidth, height=0.055\textheight]{"fig_new_sharp/vsb100/t_2/2_true"}\\
+    
+    t + 4 &
+    \includegraphics[width=0.110\textwidth, height=0.055\textheight]{"fig_new_sharp/vsb100/t_4/1_blurry"} &
+    \includegraphics[width=0.110\textwidth, height=0.055\textheight]{"fig_new_sharp/vsb100/t_4/1_baseline"} &
+    \includegraphics[width=0.110\textwidth, height=0.055\textheight]{"fig_new_sharp/vsb100/t_4/1_sharp"} &
+    \includegraphics[width=0.110\textwidth, height=0.055\textheight]{"fig_new_sharp/vsb100/t_4/1_true"} &
+    \includegraphics[width=0.110\textwidth, height=0.055\textheight]{"fig_new_sharp/vsb100/t_4/3_blurry"}&
+    \includegraphics[width=0.110\textwidth, height=0.055\textheight]{"fig_new_sharp/vsb100/t_4/3_baseline"}&
+    \includegraphics[width=0.110\textwidth, height=0.055\textheight]{"fig_new_sharp/vsb100/t_4/3_sharp"}&
+    \includegraphics[width=0.110\textwidth, height=0.055\textheight]{"fig_new_sharp/vsb100/t_4/3_true"}\\
+    \midrule
+    
+    t + 2 &
+    \includegraphics[width=0.110\textwidth, height=0.055\textheight]{"fig_new_sharp/ucf101/t_2/3_pred"} &
+    \includegraphics[width=0.110\textwidth, height=0.055\textheight]{"fig_new_sharp/ucf101/t_2/3_baseline"} &
+    \includegraphics[width=0.110\textwidth, height=0.055\textheight]{"fig_new_sharp/ucf101/t_2/3_sharp"} &
+    \includegraphics[width=0.110\textwidth, height=0.055\textheight]{"fig_new_sharp/ucf101/t_2/3_true"} &
+    \includegraphics[width=0.110\textwidth, height=0.055\textheight]{"fig_new_sharp/ucf101/t_2/2_pred"}&
+    \includegraphics[width=0.110\textwidth, height=0.055\textheight]{"fig_new_sharp/ucf101/t_2/2_baseline"}&
+    \includegraphics[width=0.110\textwidth, height=0.055\textheight]{"fig_new_sharp/ucf101/t_2/2_sharp"}&
+    \includegraphics[width=0.110\textwidth, height=0.055\textheight]{"fig_new_sharp/ucf101/t_2/2_true"}\\
+    
+    t + 4 &
+    \includegraphics[width=0.110\textwidth, height=0.055\textheight]{"fig_new_sharp/ucf101/t_4/3_pred"} &
+    \includegraphics[width=0.110\textwidth, height=0.055\textheight]{"fig_new_sharp/ucf101/t_4/3_baseline"} &
+    \includegraphics[width=0.110\textwidth, height=0.055\textheight]{"fig_new_sharp/ucf101/t_4/3_sharp"} &
+    \includegraphics[width=0.110\textwidth, height=0.055\textheight]{"fig_new_sharp/ucf101/t_4/3_true"} &
+    \includegraphics[width=0.110\textwidth, height=0.055\textheight]{"fig_new_sharp/ucf101/t_4/2_pred"}&
+    \includegraphics[width=0.110\textwidth, height=0.055\textheight]{"fig_new_sharp/ucf101/t_4/2_baseline"}&
+    \includegraphics[width=0.110\textwidth, height=0.055\textheight]{"fig_new_sharp/ucf101/t_4/2_sharp"}&
+    \includegraphics[width=0.110\textwidth, height=0.055\textheight]{"fig_new_sharp/ucf101/t_4/2_true"}\\
+    
+    \bottomrule
+    
+    \end{tabular}
+  \caption{Sharpening RGB predictions using our Fusion scheme on VSB100 (top two rows) and on UCF101 (bottom two rows).}
+  \label{fig:rgbframes}
+\end{figure*}
+
+
+\begin{figure}[h]
+    \centering
+        \includegraphics[width=\linewidth]{"fusion"}    
+        \caption{Our fusion model architecture.}
+    \label{fig:fusionarch}
+\end{figure}
+
+\myparagraph{Evaluation on Real Billiard Sequences.}
+Prediction on real billiard table sequences is a challenging test for our models. The table fabric causes rapid deceleration of the ball (compared to the constant velocity in the synthetic sequences). Spin is sometimes inadvertently introduced and a segmentation algorithm applied on the observed frames introduces artifacts. The boundaries are not always consistent across frames of a sequence and they are jagged and change shape.  We collect 350 real billiard sequences, with one ball, as our training set. To deal with deceleration, we experiment with increasing the number of input frames. We train our CMSC model with six input frames and pre-train on our synthetic one ball training set. We report the results of evaluation (F-measure as in \autoref{par:mb}) on 30 independent sequences in \autoref{bf_real}. As many boundaries (e.g table borders) remain static the last input baseline performs very well. For fair comparison we use a mask obtained with a ball tracker,  Our method is able to propagate the motion of the ball and beats the last input baseline in the masked case. We show qualitative results in \autoref{fig:bframes} as trails, where our model predicts 20 and 50 time-steps into the future.
+
+\section{Sharpening RGB Predictions with Fusion}
+The sharp boundaries produced by our models raise the prospect of sharpening RGB predictions in a fusion scheme. We present our fusion architecture in \autoref{fig:fusionarch}, which fuses RGB predictions of \cite{mathieu2015deep} with our boundaries. Note that, our approach can be used on top of any RGB frame prediction method and unlike \cite{villegas2017learning} is video domain agnostic. It is inspired by prior work \cite{eigen2013restoring,mao2016image} on deblurring/denoising. Like these models our fusion model is fully convolutional. Resolution is maintained by skip connections, as in \cite{mao2016image}.  Our fusion model takes as input the predicted RGB and boundaries at each timestep and is trained with L2 loss.
+
+\myparagraph{Datasets and metrics.} We evaluate on both VSB100 and UCF101 datasets. We randomly select 30 and 20 videos from VSB100 to train our CMSC model and our fusion model. We test on the remaining 50 videos. Similarly we randomly select 1000, 500 (training) and 1000 (test) videos from UCF101. The UCF101 train/test set was segmented using the method of \cite{Man+16a}. We use PSNR, the sharpness loss measure from \cite{mathieu2015deep} and the Laplacian measure as evaluation metrics.
+
+\myparagraph{Baselines.} We include a baseline de-blurring model. It has the same architecture as our fusion model, except for the top block. This baseline aims to de-blur RGB predictions without observing our predicted boundaries.
+
+\myparagraph{Evaluation.} We observe improved and sharper RGB predictions (see \autoref{tab:fusion}) \footnote{ Corresponding results in Table 5 in \cite{mathieu2015deep}. We do not use motion masking as we would like our model to keep still boundaries intact. }. Our fusion model learns to reintroduce lost high frequency information.

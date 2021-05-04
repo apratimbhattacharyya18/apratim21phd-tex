@@ -1,0 +1,60 @@
+\bgroup
+\tabcolsep 0.75pt
+\renewcommand{\arraystretch}{0.5}
+
+% \newlength{\trackswidth}
+% \setlength{\trackswidth}{1.9cm}
+
+\newlength{\trackswidth}
+\setlength{\trackswidth}{2.2cm}
+
+\begin{figure}[t]
+\begin{center}
+\begin{tabular}{cccc}
+\includegraphics[width=\trackswidth]{track017.jpg}&
+\includegraphics[width=\trackswidth]{track019.jpg}&
+\includegraphics[width=\trackswidth]{track012.jpg}&
+\includegraphics[width=\trackswidth]{track015.jpg}\\
+\includegraphics[width=\trackswidth]{track006.jpg}&
+\includegraphics[width=\trackswidth]{track016.jpg}&
+\includegraphics[width=\trackswidth]{track001.jpg}&
+\includegraphics[width=\trackswidth]{track013.jpg}\\
+\end{tabular} 
+\end{center}
+\caption[Sample tracks for different activities.]{Sample tracks for different activities. \emph{Backward tracks in green}, \emph{forward tracks in red} and \emph{initial pose in cyan}. First row, (left to right): \emph{peel}, \emph{stir}, \emph{wash objects}, \emph{open egg}, Second row (left to right): \emph{cut slices}, \emph{cut dice}, \emph{take out from drawer}, \emph{open egg}.}
+\label{fig:cvpr12:tracks}
+\vspace{0pt}
+\end{figure}
+\egroup
+
+
+\subsubsection{Body model and FFT features}
+
+%~\citep{zinnen09loca} or used the following posture features
+% \begin{itemize}
+%   \item orientation towards gravity
+%   \item hands height
+%   \item torso direction towards car
+%   \item distance between hands 
+% \end{itemize}
+% using min, max, mean and variance
+
+% 
+% For motion trajectories we use 8 out of 10 upper body parts those which can demonstrate the activities in a kitchen scenario more explicitly.
+% 
+% These selected parts are then tracked in the consecutive frames using dense SIFT matching in the local neighbourhood of each individual parts.  
+% 
+% As a result, for each frame (every 10th frame in our dataset) we get 8 2D-trajectories of the body parts movement in the previous and next 50 consecutive frames. From this we compute the following primitives:
+% +-10,25,50 frames
+
+Given the body joint trajectories we compute two different feature representations: Manually defined statistics over the body model trajectories, which we refer to as \emph{body model features} (BM) and Fourier transform features (FFT) from \citet{zinnen09iswc} which have shown effective for recognizing activities from body worn wearable sensors.
+
+For the BM features we compute the \emph{velocity} of all joints (similar to gradient calculation in the image domain) which we bin in a 8-bin histogram according to its direction, weighted by the speed (in pixels/frame). This is similar to the approach by \citet{messing09iccv} which additionally bins the velocity's magnitude. We repeat this by computing \emph{acceleration} of each joint. Additionally we compute \emph{distances} between the right and corresponding left joints as well as between all 4 joints on each body half. For each distance trajectory we compute statistics (mean, median, standard deviation, minimum, and maximum) as well as a rate of change histogram, similar to velocity. Last, we compute the angle trajectories at all inner joints (wrists, elbows, shoulders) and use the statistics (mean etc.) of the angle and angle speed trajectories. This totals to 556 dimensions.
+
+The FFT feature contains 4 exponential bands, 10 cepstral coefficients, and the spectral entropy and energy for each x and y coordinate trajectory of all joints, giving a total of 256 dimensions. 
+
+For both features (BM and FFT) we compute a separate codebook for each distinct sub-feature (\ie\ velocity, acceleration, exponential bands etc.) which we found to be more robust than a single codebook. We set the codebook size to twice the respective feature dimension, which is created by computing k-means from all features (over 80,000).
+%
+We compute separately both features for trajectories of length 20, 50, and 100 (centered at the frame where pose was detected) to allow for different motion lengths. The resulting features for different trajectory lengths are combined by stacking and give a total feature dimension of 3,336 for BM and 1,536 for FFT.
+% We will provide the features for the dataset as well as code for computing these features.
+% upon publication.

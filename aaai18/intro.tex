@@ -1,0 +1,27 @@
+Humans possess the skill to imagine future states of observed scenes in  diverse scenarios. This supports various different tasks ranging from planning to object manipulation, e.g. a goalkeeper jumping to intercept the ball or reaching out for a handshake. Humans can readily perform such complex and versatile tasks because they can anticipate motions including an intuitive understanding of physical laws from the early age \cite{baillargeon1994infants,baillargeon2004infants}. 
+
+In this work, we propose the task of predicting future scene boundaries. Scene boundaries capture the important structure and extents of objects. Moreover, they can be accurately estimated \cite{khoreva2016improved}. Prediction of future scene boundaries requires understanding of object dynamics and motion patterns including an intuitive understanding of physical laws or ``intuitive physics''. In this work, we focus on two particular scenarios involving motion and local interactions. The first one, which we call physics-based motion, can fully be described by the laws of physics, e.g. dynamics of  billiard balls. The second one, which we call agent-based motion, also involves understanding of intentions, e.g. dynamics of an ice-skater. Therefore, our methods have to deal with diverse situations, work on raw pixels, and should be capable of long-term predictions. \autoref{fig:teaser} shows example results of our method that accurately predicts future scene boundaries.
+
+\begin{figure}[t]
+\centering
+\begin{tabular}{cc }
+\includegraphics[width=0.20\textwidth, height=0.08\textheight]{"teaser/1_gt"} &
+\includegraphics[width=0.20\textwidth, height=0.08\textheight]{"teaser/1_tr"}\\
+\includegraphics[width=0.20\textwidth, height=0.08\textheight]{"teaser/19_gt"} &
+\includegraphics[width=0.20\textwidth, height=0.08\textheight]{"teaser/19_tr"}\\
+\textbf{Last Observation: $t$} & \textbf{Prediction} \\
+\end{tabular}
+\caption{Predicted future boundary images, from $t$ + 1 (Yellow) to $t$ + 8 (Row 1), $t$ + 18 (Row 2) (Red), superimposed.}\label{fig:teaser}
+\end{figure}
+
+Recently, full future frame predication of observed scenes has been studied \cite{mathieu2015deep,liu2017video}. But up to now, only very short range predictions of few frames have been shown, where blurriness/distortion artifacts occur in the predicted future frames -- losing/incorrectly propagating high-frequency information. This high frequency information is crucial for meaningful predictions about the future, e.g. on a billiard table the location of a ball and table boundaries are necessary to infer the future state of the table. Boundaries capture this crucial high frequency information and are also known to reveal important structures of the visual scene \cite{wertheimer1923laws,amfm_pami2011,galasso2013unified}. Therefore, we argue that the task of future boundary prediction is a more suitable benchmark for understanding and predicting physics or agent-based motion.
+
+
+Our main contributions are as follows, 
+\begin{enumerate*}
+    \item We propose the novel task of future boundary prediction.
+    \item We propose the first method that predicts future boundaries based only on the raw pixels.
+    \item We evaluate our model on two scenarios involving physics-based (synthetic and real billiard sequences) and agent-based motion (VSB100, \cite{galasso2013unified}).
+    \item Under the physics-based scenario, the method shows for the first time long-term predictions.
+    \item Under the agent-based scenario on VSB100 and UCF101, we show that the predicted boundaries can be used in a fusion scheme that improves RGB video prediction in the longer-term.
+\end{enumerate*}

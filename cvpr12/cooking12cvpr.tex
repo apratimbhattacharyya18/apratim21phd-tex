@@ -1,0 +1,132 @@
+\documentclass[10pt,twocolumn,letterpaper]{article}
+
+\usepackage{cvpr}
+\usepackage{times}
+\usepackage{epsfig}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+% \usepackage[small]{caption}
+% Include other packages here, before hyperref.
+\usepackage{rotating} % for ratating table headers
+\usepackage{booktabs} % for fancy tables
+
+% If you comment hyperref and then uncomment it, you should delete
+% egpaper.aux before re-running latex.  (Or just hit 'q' on the first latex
+% run, let it finish, and you should be clear).
+\usepackage[pagebackref=true,breaklinks=true,letterpaper=true,colorlinks,bookmarks=false]{hyperref}
+% \usepackage[pagebackref=true,breaklinks=true,letterpaper=true,colorlinks,bookmarks=false]{}
+\newcommand{\todo}[1]{\textcolor{red}{ToDo: #1}}
+% \newcommand{\textbfmax}[1]{\textbf{#1}}
+\newcommand{\textbfmax}[1]{#1}
+\newcommand{\myparagraph}[1]{\vspace{-0.3cm} \paragraph{#1}} 
+% \newcommand{\myparagraph}[1]{\vspace{0.2cm} \noindent\textbf{#1}}
+\graphicspath{{./fig/}}
+
+
+% Custom footer for title page to comply with IEEE copyright
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\fancyhf{}
+\lfoot{{\footnotesize\parbox{\linewidth}{\vspace{2.5em}%
+To appear in the Proc.~of the \emph{IEEE Conf.~on Computer Vision and
+Pattern Recognition (CVPR)}, %pp.~\thepage--\pageref*{LastPage},
+Providence, Rhode Island, June 2012.\\\hrule\vspace{\baselineskip}
+\copyright~2012 IEEE. Personal use of this material is permitted.
+Permission from IEEE must be obtained for all other uses, in any
+current or future media, including reprinting/republishing this
+material for advertising or promotional purposes, creating new
+collective works, for resale or redistribution to servers or lists, or
+reuse of any copyrighted component of this work in other works.%
+}}}
+% add \thispagestyle{fancy} after \maketitle
+
+\cvprfinalcopy % *** Uncomment this line for the final submission
+
+\def\cvprPaperID{} % *** Enter the CVPR Paper ID here
+\def\httilde{\mbox{\tt\raisebox{-.5ex}{\symbol{126}}}}
+
+% Pages are numbered in submission mode, and unnumbered in camera-ready
+% \ifcvprfinal\pagestyle{empty}\fi
+\setcounter{page}{1}
+\begin{document}
+\input{autoContent/constants}
+%%%%%%%%% TITLE
+\title{A Database for Fine Grained Activity Detection of Cooking Activities}
+\newcommand{\authSpace}{\hspace{15mm}}
+\author{
+ Marcus Rohrbach \authSpace Sikandar Amin  \authSpace Mykhaylo Andriluka \authSpace  Bernt Schiele\\
+Max Planck Institute for Informatics, Saarbr{\"u}cken, Germany\\\vspace{-0.6cm}
+ }
+
+\maketitle
+% \thispagestyle{empty}
+\thispagestyle{fancy}
+%%%%%%%%% ABSTRACT
+\begin{abstract}
+   \input{abstract}
+\end{abstract}
+
+%%%%%%%%% BODY TEXT
+%-------------------------------------------------------------------------
+ \vspace{-0.25cm}
+\section{Introduction}
+\label{sec:cvpr12:intro}
+\input{intro}
+
+% \vspace{-0.1cm}
+\section{Related work}
+\label{sec:cvpr12:related}
+\input{related}
+
+% \vspace{-0.2cm}
+\section{Fine grained human activities database}
+\label{sec:cvpr12:database}
+\input{database}
+
+% \vspace{-0.2cm}
+\section{Approaches}
+\label{sec:cvpr12:approaches}
+\input{benchmarkSystems} 
+
+% \vspace{-0.1cm}
+\subsection{Pose-based approach}
+\label{sec:cvpr12:approach:pose}
+\input{bodymodel}
+\input{bmfft}
+
+% \vspace{-0.1cm}
+\subsection{Holistic approach}
+\label{sec:cvpr12:approach:holistic}
+\input{holisticDenseTrack}
+
+
+% \subsection{Activity classification}
+% \input{activityClassification}
+
+% \vspace{-0.1cm}
+\subsection{Activity classification and detection}
+\input{activityDetection}
+
+
+% \vspace{-0.2cm}
+\section{Evaluation}
+\input{results} 
+
+ 
+% \vspace{-0.2cm}
+\section{Conclusion}
+\input{conclusion}
+ 
+%\nocite{*} 
+%-------------------------------------------------------------------------
+
+{\scriptsize
+\bibliographystyle{ieee}
+\bibliography{short,biblio}
+}
+
+
+\end{document}

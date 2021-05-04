@@ -1,0 +1,4 @@
+Most approaches  for activity recognition are based on a  bag-of-words representations. We pick the state-of-the-art dense trajectories  approach \citep{wang11cvpr,wang13ijcv} which extracts histograms of oriented gradients (HOG), flow \citep[HOF][]{laptev08cvpr}, and motion boundary histograms \citep[MBH][]{dalal06eccv} around densely sampled points, which are tracked for 15 frames by median filtering in a dense optical flow field. The x and y \emph{trajectory} speed is used as a fourth feature. Using their code and parameters which showed state-of-the-art performance on several datasets we extract these features on our data.  
+%
+Following \citet{wang11cvpr} we generate a codebook for each of the four features of 4,000 words using k-means from over a million sampled features.
+%To generate a histogram features are binned to their closest visual word by Euclidean distance.

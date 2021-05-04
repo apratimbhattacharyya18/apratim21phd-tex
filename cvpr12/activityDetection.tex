@@ -1,0 +1,31 @@
+
+
+We train classifiers on the feature representation described in the previous section 
+given the ground truth intervals and labels.
+We train one-vs-all SVMs using mean SGD as introduced in \secref{sec:cvpr11:meansgd} with a $\chi^2$ kernel approximation~\citep{vedaldi10cvpr}.
+While we use ground truth intervals for computing classification results we use a sliding window approach to find the correct interval of a detection. To efficiently compute features of a sliding window we build an integral histogram over the histogram of the codebook features. We use non maximum suppression over different window lengths and start with the maximum score and remove all overlapping windows.
+%
+% For the benchmarked models we use hard-binned histograms using the 
+%For use groundtruth intervals as training examples. 
+%For classification we directly test on the groundtruth intervals for each 
+%activity. For detection we follow a sliding window strategy as described above. 
+%on different time-scales followed 
+%by non-maximum-suppression 
+%(see \secref{sec:cvpr12:).
+%
+%, which we found to give a good multi-class balancing as all classes are trained simultaneously. 
+In the detection experiments we use a minimum window size of 30 with a step size of 6 frames; we increase window and step size by a factor of $\sqrt{2}$ until we reach a window size of 1800 frames (about 1 minute). Although this will still not cover all possible frame configurations, we found it to be a good trade-off between performance and computational costs.
+
+% \subsection{Multiclass}
+
+% 
+% For each Window we do:
+% 
+% If another longer (on both sides) and stronger Window exists, we remove it.
+% 
+% Otherwise we remove all overlapping and weaker Windows. (This last step might already be suffienct)
+
+
+
+
+

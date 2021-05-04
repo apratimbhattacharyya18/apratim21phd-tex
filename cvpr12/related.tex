@@ -1,0 +1,154 @@
+We first discuss related datasets for activity recognition, and then related approaches to the ones benchmarked on our dataset. \citet{aggarwal11acs} give an extensive survey of the field.
+
+\newcommand{\datasetmidrule}{\cmidrule(){1-7}} 
+ 
+ \defcitealias{natarajan08cvpr}{Natarajan  \textit{\etal}, 2008}
+  \defcitealias{ryoo09iccv}{Ryoo \textit{\etal}, 2009}
+  \defcitealias{laptev07iccv}{Laptev`07}
+\begin{table}
+\begin{small}
+\hspace{-2mm}
+\begin{tabular}{@{\ }l@{}l@{}rr@{\ \ }r@{\ \ }r@{\ \ }c@{\ }}
+\toprule
+ & cls,&       classes &\multicolumn{1}{@{}c@{}}{clips:}&\multicolumn{1}{@{}c@{}}{sub-}&  \multicolumn{1}{@{}c@{}}{\#}& \multicolumn{1}{@{}c@{}}{reso-}\\    
+Dataset & \hspace{2.7mm}det& &\multicolumn{1}{@{}c@{}}{videos}& \multicolumn{1}{@{}c@{}}{jects}&  \multicolumn{1}{@{}c@{}}{frames} & \multicolumn{1}{@{}c@{}}{lution}\\   
+\datasetmidrule
+\multicolumn{5}{@{\ }l}{\textbf{Full body pose datasets}}	\\
+% Weizmann~\citep{gorelick07pami} & cls & 9 & \hspace{3mm} &\\
+KTH~\citep{schuldt04icpr} & cls & 6 & 2,391\hspace{3mm}  &  25  & $\approx$200,000 &     160x120 \\
+USC gestures~\citepalias{natarajan08cvpr} &cls &6 & 400\hspace{3mm} & 4 & &740x480\\
+MSR action~\citep{yuan09cvpr}& cls,det & 3 &63\hspace{3mm}  & 10 &  & 320x240\\ 
+\datasetmidrule
+\multicolumn{5}{@{\ }l}{\textbf{Movie datasets}}\\
+Hollywood2~\citep{marszalek09cvpr}& cls & 12 & 1,707:69 &   \\
+% Olympic sports ~\citep{niebles10eccv} & cls & 16 & 800\hspace{3mm} &   \\
+% UCF YouTube~\citep{liu09cvpr}& cls & 11 & 1,168\hspace{3mm} \\
+% UCF sports~\citep{rodriguez08cvpr} & cls & 9 & 182\hspace{3mm}  &   & & 720x480 \\  
+UCF50\textsuperscript{\ref{fn:ucf50}} & cls & 50 & $>$5,000\hspace{3mm} &\\
+HMDB51~\citep{kuehne11iccv}& cls & 51 & 6,766\hspace{3mm} &  &  & height:240\\
+ASLAN \citep{kliper12pami}& cls &  432 & 3,631:1,571 & &\\ 
+Coffee and Cigarettes~\citepalias{laptev07iccv}& \hspace{2.7mm} det & 2 & 264:11 &  &  \\
+% Hollywood Localization~\citep{klaser10sga} & \hspace{2.7mm} det & 2\\
+High Five~\citep{patron10bmvc} & cls,det & 4 & 300:23 & & \\
+% DLSBP\citep{duchenne09iccv} & \hspace{2.7mm} det & 2 & 266 \hspace{3mm} & \\
+\datasetmidrule \multicolumn{5}{@{\ }l}{\textbf{Surveillance datasets}}\\
+PETS 2007~\citep{ferryman07pets}& \hspace{2.7mm} det & 3 &  10\hspace{3mm} &  &   32,107 & 768x576 \\ % 4 cameras
+UT interaction~\citepalias{ryoo09iccv}& cls,det & 6 & 120\hspace{3mm} & 6   \\
+VIRAT~\citep{oh11cvpr} & \hspace{2.7mm} det & 23 & 17& & &1920x1080\\
+\datasetmidrule \multicolumn{5}{@{\ }l}{\textbf{Assisted daily living datasets}}\\
+%~\citep{gehrig09hr} & \hspace{2.7mm} det & 24 & \\
+TUM Kitchen~\citep{tenorth09iccw} & \hspace{2.7mm} det & 10 & 20  &  4  & 36,666 &   384x288 \\ % 4 cameras
+CMU-MMAC~\citep{torre09tr} & cls,det &  $>$130& & 26  & & 1024x768~~\\
+URADL~\citep{messing09iccv} & cls & 17 & 150:30 &  5  & $\leq$	50,000 &   1280x720~~  \\
+Our database & cls,det & \DBnActivities & 5,609:\DBnVideoSeq &  \DBnSubjects   & \DBnFrames &  1624x1224 \\ %  \DBnAnnos
+\bottomrule  \\
+\end{tabular} 
+\end{small}  
+\caption[Overview of activity recognition datasets]{Overview of activity recognition datasets: We list if datasets allow for classification (cls), detection (det); number of activity classes; number of clips extracted from full videos (only one listed if identical), number of subjects, total number of frames, and resolution of videos. We leave fields blank if unknown or not applicable.} 
+\label{tbl:cvpr12:datasets} 
+\end{table} 
+
+\subsection{Activity Datasets} 
+\label{sec:cvpr12:related:datasets}
+Even when excluding single image action datasets such as the Stanford-40 Action Dataset \citep{yao11iccv} or the Pascal Action Classification Challenge \citep{everingham11pascal}, the number of proposed activity datasets is quite  large (\citet{ahad11sice} list over 30 datasets). Here, we 
+focus on the most important ones with respect to database size, usage, and similarity to our proposed dataset (see \tableref{tbl:cvpr12:datasets}). 
+%
+We distinguish four broad categories of datasets: full body pose, movie, surveillance, and assisted daily living datasets -- our dataset falls in the last category.
+
+The full body pose datasets are defined by actors performing full body actions. 
+KTH~\citep{schuldt04icpr}, USC gestures~\citep{natarajan08cvpr}, and similar datasets~\citep{singh11iccv} require classifying simple full body and mainly repetitive activities. 
+%, such as \emph{walking}. %While these require only classification, the
+% Being one of the first datasets, they have been widely used for benchmarking 
+% even though they are restricted to simple activities and to a rather small number of activities. 
+% USC gestures~\citep{natarajan08cvpr},
+%  activities are defined by full body configurations. Recently, Singh \etal 
+% similar to~\citep{singh11iccv},
+%extended their previously proposed hand and gestures dataset with more challenging backgrounds. Similar to 
+ The MSR actions~\citep{yuan09cvpr} pose a detection challenge limited to three classes.
+In contrast to these full body pose datasets, our dataset contains more and in particular fine-grained activities. 
+ 
+
+The second category consists of movie clips or web videos with challenges such as partial occlusions, camera motion, and diverse subjects. UCF50\footnote{\label{fn:ucf50}http://vision.eecs.ucf.edu/data.html} and similar~\citep{liu09cvpr,niebles10eccv,rodriguez08cvpr} datasets focus on sport activities. Kuehne \etal's evaluation suggests that these activities can already be discriminated by static joint locations alone~\citep{kuehne11iccv}. 
+%
+Hollywood2~\citep{marszalek09cvpr}, HMDB51~\citep{kuehne11iccv}, and ASLAN \citep{kliper12pami} have very diverse activities. Especially HMDB51~\citep{kuehne11iccv} is an effort to provide a large scale database of 51 activities while reducing database bias. Although it includes similar, fine-grained activities, such as \emph{shoot bow} and \emph{shoot gun} or \emph{smile} and \emph{laugh}, most classes have a large inter-class variability and the videos are low-resolution. \citet{kliper12pami} focus on a larger number of activities but with little training data per category. Here the focus is to identify similar videos rather than categorising them.
+A significantly larger video collection is evaluated during the TRECVID challenge \citep{over12tv}. In the 2012 challenge consisted of 291h of short videos from the Internet Archive
+(archive.org) and more than 4,000h of multi-media (audio and video) data. The challenge consists of different tasks including semantic indexing and multi-media event recognition of 20 different event categories such as \emph{making a sandwich} and \emph{renovating a home}. Large parts of the data are, however, only available to the participants during the challenge.
+% 
+Although our dataset is easier in respect to camera motion and background, it is challenging with respect to a smaller inter-class variability. 
+ 
+The datasets Coffee and Cigarettes \citep{laptev07iccv} and High Five \citep{patron10bmvc}  are different to the other movie datasets by promoting activity detection rather than classification. This is clearly a more challenging problem as one not only has to classify a pre-segmented video but also to detect (or localize) an activity in a continuous video. %However, these datasets are limited to the detection of up to four classes each, such as drinking coffee and smoking cigarettes.  
+%as well as DLSBP\citep{duchenne09iccv}
+%Hollywood Localization~\citep{klaser10sga},
+%Although these the first two activities are similar to our dataset's activities as being fine-grained.
+As these datasets have a maximum of four classes, our dataset goes beyond these by distinguishing a large number of classes.
+%  UCF50\footnote{\label{fn:ucf50}http://server.cs.ucf.edu/~vision/data.html} as an extension to UCF YouTube\citep{liu09cvpr} and similar to UCF sport~\citep{rodriguez08cvpr}
+%  
+% Web Video Actions~\citep{nga11iccv} 
+ 
+% not convinced of the following paper
+% Web Video Actions~\citep{nga11iccv} automatically query web videos 
+ 
+The third category of datasets is targeted towards surveillance. The PETS~\citep{ferryman07pets} or SDHA2010\footnote{http://cvrc.ece.utexas.edu/SDHA2010/} workshop datasets contain real world situations form surveillance cameras in shops, subway stations, or airports. They are challenging as they contain multiple people with high partial occlusion. 
+%They contain few, but difficult activities such as \emph{baggage abandonment} or \emph{loitering} which have to be detected in a video stream.
+The UT interaction~\citep{ryoo09iccv} requires to distinguish 6 different two-people interaction activities, such as \emph{punch} or \emph{shake hands}. %, from acted surveillance-style recorded videos. Similar surveillance videos have been suggested by the same authors as part of the .
+The VIRAT~\citep{oh11cvpr} dataset is a recent attempt to provide a large scale dataset with 23 activities on nearly 30 hours of video. Although the video is high-resolution people are only of 20 to 180 pixel height. 
+Overall the surveillance activities are very different to ours which are challenging with respect to fine-grained body-pose motion.
+
+For the domain of \emph{Assisted daily living (ADL) datasets}, which also includes our dataset, only recently datasets have been proposed in the vision community. The University of Rochester Activities of Daily Living Dataset (URADL)~\citep{messing09iccv} provides high-resolution videos of 10 different activities such as \emph{answer phone}, \emph{chop banana}, or \emph{peel banana}. Although some activities are very similar, the videos are produced with a clear script and contain only one activity each.
+%
+In the TUM Kitchen dataset~\citep{tenorth09iccw} all subjects perform the same high level activity (\emph{setting a table}) and rather similar actions with limited variation. 
+%
+%The domain of ADL has been explored much stronger in the \todo{sensor based activity recognition community?}. 
+\citet{roggen10icnss} and \citet{torre09tr} present recent attempts to provide 
+several hours of multi-modal sensor data (\eg body worn acceleration and object location).
+But unfortunately people and objects are (visually) instrumented, making the videos visually unrealistic. %; additionally in~\citep{roggen10icnss} the (low-resolution) video is mostly for annotations. 
+In the CMU-MMAC dataset \citep{torre09tr} all subjects prepare the identical five dishes with very similar ingredients and tools. In contrast to this our dataset contains 14 diverse dishes, where each subject uses different ingredients and tools in each dish. \citeauthor{torre09tr} also record an egocentric view. Here and similar in \citep{farhadi10cvpr,fathi11iccv,stein13acm} the camera view mainly shows hands and manipulated cooking ingredients. Also recorded in an egocentric view, \citet{pirsiavash12cvpr} propose a dataset of 18 diverse daily living activities, not restricted to the cooking domain, recorded in different houses in non-scripted fashion.
+
+Overall our dataset fills the gap of a large database with realistic, fine-grained activities, posing a classification and detection challenge in high resolution video sequences.
+
+\subsection{Holistic approaches for activity recognition}
+Most approaches for human activity recognition in video focus on using holistic video features, some use the human body pose as a basis.
+%
+% \subsubsection{Holistic image features}
+% chakraborty11iccv get 58.46 on hollywood
+To create a discriminative feature representation of a video many approaches first detect space-time interest points~\citep{chakraborty11iccv,laptev05ijcv} or sample them densely~\citep{wang09bmvc} and then extract diverse descriptors in the image-time volume, such as histograms of oriented gradients (HOG) and flow (HOF)~\citep{laptev08cvpr} or local trinary patterns~\citep{yeffet09iccv}.
+
+\citet{messing09iccv} found improved performance by tracking Harris3D interest points~\citep{laptev05ijcv}. The second of the two benchmark approaches we evaluate (see \secref{sec:cvpr12:approach:holistic}), is based on this idea: \citet{wang11cvpr,wang13ijcv} track dense feature points and extract strong video features (HOG, HOF, MBH) around these tracks. They report state-of-the art results on KTH~\citep{schuldt04icpr}, UCF YouTube~\citep{liu09cvpr}, Hollywood2~\citep{marszalek09cvpr}, and UCF sports~\citep{rodriguez08cvpr}.
+
+Other directions include template based approaches~\citep{rodriguez08cvpr} or segmenting the space-temporal data and constructing a graph from this~\citep{brendel11iccv}. Another direction is to detect activities with a body-worn camera~\citep{taralova09ev}.
+ 
+ 
+\subsection{Body pose for activity recognition}
+
+% Poses of humans and their activities are closely related to each other. For
+% example, 
+Many human activities such as \emph{sitting}, \emph{standing}, and \emph{running} are
+defined in terms of body poses and their motion. However, compared to the number of holistic approaches 
+there exist still little work on visual activity
+recognition based on articulated pose estimation, also exceptions exist, including \citep{Ferrari:2008:PSS,singh11iccv,raptis13cvpr}. Pose-based activity
+recognition appears to work particularly well for images with little clutter and
+fully visible people as in  %Weizmann dataset or 
+the gesture dataset from \citet{singh11iccv}. Estimates of people poses were also used as auxiliary
+information for activity recognition in single images
+\citep{Yang:2010:RHA}. However, these systems have not shown to be effective in
+complex dynamic scenes with frequent occlusions, truncation and complex
+poses. This seems also in line with the recent study of \citet{jhuang13iccv} who show improved activity recognition using ground truth pose estimates, but when estimating human pose automatically they only show it for fully visible bodies. So far, action recognition in such scenes was addressed only by holistic
+feature-based methods such as \citep{laptev08cvpr} %. We believe, that little use
+%of pose estimation for activity recognition is mostly
+ due to the difficulty of
+reliable pose estimation in the complex real-world conditions. 
+
+
+% To tackle these challenges in our work we im
+%For example, in
+% other domains where pose estimates are easier to obtain, pose-based features were
+% shown to be effective and outperform holistic purely sensor-based approaches
+%~\citep{zinnen09iswc}.
+
+\citet{sung11corr} use depth information from a Kinect to estimate pose \citep{shotton11cvpr} and distinguish 12 activities. However, in an initial test we found that the Kinect sensor has difficulties to capture fine grained activities due to limited resolution.
+
+
+
+
+
+

@@ -1,0 +1,42 @@
+\begin{figure*}[t]
+    \centering
+    \includegraphics[width=0.8\linewidth]{"fig3/fbarchnew"}    
+    \caption{Convolutional Multi-scale with Context architecture (only 2 out of 4 scales illustrated).}
+    \label{fig:modelarch}
+\end{figure*}
+
+We present a model that observes a sequence of boundary images, where each pixel encodes the confidence of occurrence of an image boundary at that location and then predicts the boundary image(s) at the next time-step(s). 
+An overview of our Convolutional Multi-Scale Context (CMSC) model is shown in \autoref{fig:modelarch}. 
+
+We approach long term prediction by recursion, due to the advantage of efficiency. However, errors are potentially propagated and accumulated over time. In order to mitigate such effects, we need our model to be  accurate and to consolidate information over time. Our model has been designed through analysis of prior work on the related task of frame prediction, to maximize accuracy. Furthermore, our model has many novel aspects which are key to long term prediction.
+
+In order to generalize across diverse sequences while maintaining a tractable number of parameters, a patch based approach is adopted. Therefore, our model observes and predict on patches rather than the complete input image. Alternatively, this can be seen as multiple replicas (``patch predictors'') of our model predicting on patches of the input sequence. We now describe our model through an analysis of its various components.
+
+\subsection{Fully Convolutional.} Our CMSC model consists of only convolutional layers. The input boundary image sequence is concatenated as channels and is read by the first convolutional layer. Convolutional layers can extract high quality location invariant features. In particular, they can extract information about the orientation and direction of motion of boundaries. Neurons at upper convolutional layers have larger receptive fields and can aggregate information. In fact, as shown by the work  \cite{jain2007supervised}, the output layer should have a wide receptive field to preserve long range spatial and temporal dependencies and learn about interaction among boundaries in a spatio-temporal context. We therefore use several convolutional layers in our CMSC model. We also introduce pooling in between convolutional layers. Pooling further helps in the aggregation of information and increases receptive fields. However, excessive pooling (or tight bottlenecks with fully connected layers) have been shown to be successful in classification tasks, but also have shown by \cite{ranzato2014video} to induce image degradations for synthesis tasks. Therefore, it is crucial to use moderate pooling. Finally, we use up-sampling layers after pooling to maintain resolution. 
+
+\subsection{Multiple Scale Prediction.} 
+Multi-Scale model architectures akin to a Laplacian pyramid have shown to be advantageous for generating natural images \cite{denton2015deep} and predicting future rgb frames \cite{mathieu2015deep}. Such model architectures contain multiple levels which observes the input boundary image(s) at increasing (coarse to fine) scales. Down-sampling a boundary image would have the effect of smoothing and discarding details of a boundary image. Therefore, it would be easier to predict future boundary images at a coarser resolution. Our CMSC model also uses multiple scales (or levels). The input $I(L_{2k})$ to a certain level ($L_{2k}$) is the input boundary image sequence scaled  to the current level $X_{2k}$ and the boundary image $O$ predicted by the previous coarser level ($L_{k}$). The boundary image predicted by the coarser level is upsampled $\hat{O}$ to the scale at the current level. We have,
+\begin{align*}
+    I(L_{2k}) &=  \left\{ X_{2k}, \hat{O}(L_{k}) \right\}
+\end{align*} 
+The coarse predicted boundary images $\hat{O}(L_{k})$ act a guide for the next higher level of the model. 
+
+In detail, we use four levels, with scales increasing by a factor of two.  Each level of the model consists of five sets of two convolutional layers. They are of a constant size 3x3. We introduce a pooling layer after the first three sets of convolutional layers. We double the number of convolutional kernels after pooling. There are 32, 64, 128, 64 and 32 filters respectively in each set. We upsample the convolutional maps after the third set to maintain resolution. We use \emph{ReLU} non-linearities between every layer expect the last. We use the \emph{tanh} non-linearity at the end to ensures output in [0,1].
+
+For accurate long term prediction, it is crucial to ensure global consistency through communication between the patch predictors. Consider a video of a moving ball. The trajectory of a ball might intersect with multiple patches. To correctly predict the motion far into the future, replicas of the model predicting on neighboring patches need to be consistent especially during transition of the ball between patches. Therefore, we describe next the final component of our CMSC model, the context, which ensures global consistency.
+
+\subsection{Context.} 
+Our CMSC model observes a central patch along with the directly neighbouring 8 patches. This neighbourhood is called the context. However, the model only predicts on the central patch. While predicting recursively, the model observes its previous output along with the the output of the neighboring patch predictors. This enables the learning of spatially consistent predictions while keeping the same number of parameters.
+
+The addition of a context has the added advantage that the output layer neurons now have receptive fields that are uniform in size. Without context, the neurons at the boundary of the (2D) output layer have a smaller receptive field compared to the neurons at the center. This leads to a non-uniform (training and test) error distribution at the output layer neurons. In \autoref{fig:errordist} we plot the average error at the output layer neurons of our CMSC model at increasing distance from the patch border, with and without context. Error increases consistently from patch center (right) to the patch border (left) without a context. Note that, the model of \cite{mathieu2015deep} is also multi-scale and fully convolutional like CMSC, but it does not have pooling or context.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width = 0.28\textwidth]{"error_dist"}
+    \caption{Our model without context has higher error near the patch boundary (red) vs. with context (green).}
+    \label{fig:errordist}
+\end{figure}
+
+%Introduction of the context increases the size input boundary image patch. However, the use of four scales along with ten convolutional layers at each scale with a moderate amount of pooling ensures large receptive fields at the output layer of each level. Hence, this model meets all three key challenges. Moreover, the addition context lead to uniform receptive fields and a uniform error distribution as can be seen in \autoref{fig:errordist}.
+
+Next, we evaluate our CMSC model and the effectiveness of its various components.

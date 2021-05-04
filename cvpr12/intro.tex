@@ -1,0 +1,100 @@
+%  \item[What we are doing is relevant] Understanding human activity is an essential task for \ldots games, robots, surveillance.
+ 
+ 
+\begin{figure}[t]
+\begin{center}
+  \includegraphics[width=0.6\textwidth]{teaser.jpg}
+  \caption[Examples of fine grained cooking activities.]{Fine grained cooking activities.  (a) Full scene of \emph{cut slices}, and crops of (b) \emph{take out from drawer}, (c) \emph{cut dice}, (d) \emph{take out from fridge}, (e) \emph{squeeze}, (f) \emph{peel}, (g) \emph{wash object}, (h) \emph{grate}\vspace{-0.6cm}}
+  \label{fig:cvpr12:teaser}
+\end{center}
+\end{figure}
+
+Human activity recognition has gained a lot of interest due to its potential in a wide range 
+of applications such as human-computer interaction, smart homes, elderly/child care, or
+surveillance. At the same time, activity recognition still 
+is in its infancy due to the many challenges involved: large variety of activities, limited observability, 
+complex human motions and interactions, large intra-class variability \vs small inter-class variability, etc. 
+% human activity recognition has drawn interest of many research communities in computer science, including robotics\citep{}, sensor-based activity recognition community\citep{zinnen09iswc}, and computer vision\citep{brendel11iccv}. Maturing  computer vision approaches such as video descriptors and human pose estimation have led to an increased interest in extracting human activities from images or videos.   
+%  
+%  \item[Fine grained detection vs global action classification]
+Many approaches have been researched ranging from 
+low level image and video features~\citep{chakraborty11iccv,laptev05ijcv,wang11cvpr}, 
+over semantic human pose detection~\citep{singh11iccv}, 
+to temporal activity models~\citep{gehrig09hr,niebles10eccv,si11iccv}.
+
+% \todo{bernt: we need to list more related work here...}
+
+While impressive progress has been made, we argue that 
+the community is still addressing only part of the overall activity recognition problem. When analyzing
+current benchmark databases, we identified three main limiting factors. 
+First, many activities considered so far are rather coarse-grained, 
+\ie mostly full-body activities, \eg \emph{jumping} or \emph{waving}.
+This appears rather untypical for many application domains where we want 
+to differentiate between more fine-grained activities, \eg \emph{cut} (\figref{fig:cvpr12:teaser}a)  and \emph{peel} (\figref{fig:cvpr12:teaser}f). 
+Second, while datasets with large
+numbers of activities exist, the typical inter-class variability is high. This seems rather unrealistic
+for many applications such as surveillance or elderly care where we need to differentiate
+between highly similar activities. 
+And third, many
+databases address the problem of activity {\em classification} only without looking into 
+the more challenging and clearly more realistic problem of activity detection in a continuous 
+data stream. 
+%Additionally, classification often side-steps the typical and important problem 
+%of unbalanced activity classes and the presence of a large background class, making it 
+%difficult to generalize the results from classification benchmarks to the more general problem 
+%of activity detection. 
+Notable exceptions exist (see \secref{sec:cvpr12:related})
+even though these have other limitations such as small number of classes. 
+
+
+%\begin{figure}[t]
+%\begin{center}
+%%   \includegraphics[width=0.45\textwidth]{}
+%  \caption{Fine grained cooking activities.  full scene of (a) \emph{peel}, and crops of (b) \emph{open egg}, (c) \emph{cut slices}, (d) \emph{cut-off ends}, (e) \emph{take out from fridge}}
+%  \label{fig:cvpr12:teaser}
+%\end{center}
+%\end{figure}
+
+This chapter therefore proposes a new activity dataset that aims to address the above three
+shortcomings. More specifically we propose a dataset that contains \DBnActivities activities that are 
+for the most part fine-grained, where the inter-class variability is low,  
+and that are recorded continuously so that we can evaluate both classification 
+and detection performance. 
+% In contrast to the large variation of activity \eg in~\citep{} which distinguish between X and Y, 
+More specifically, we consider the domain of recognizing cooking activities where it is important to recognize small differences in activities as shown in \figref{fig:cvpr12:teaser}, \eg between \emph{cut} (\figref{fig:cvpr12:teaser}a) and \emph{peel} (\figref{fig:cvpr12:teaser}f), or at an even finer scale between \emph{cut slices} (\ref{fig:cvpr12:teaser}a) and \emph{cut dice} (\ref{fig:cvpr12:teaser}c).
+
+%\todo{the following paragraph needs to be completed}
+
+%In addition we benchmark two approaches on this new dataset. The first is~\citep{...}... 
+%
+%The second builds on the intuition that human pose estimation and tracking is a good basis for human 
+%activity recognition. For this we extend a state-of-the-art articulated pose estimation algorithm
+%...
+%
+
+The contribution in this chapter is twofold: First, we introduce a novel dataset which distinguishes \DBnActivities fine-grained activities. We propose a classification and detection challenge together with appropriate evaluation criteria. The dataset includes high resolution image and video sequences (jpg/avi), activity class and time interval annotations, and precomputed mid level representations in the form of precomputed pose estimates and video features. We also provide an annotated body pose training and test set. This allows to work on the raw data but also on higher level modeling of activities. Second, we evaluate several video descriptor and activity recognition approaches. On the one hand we employ a state-of-the-art holistic activity descriptor based on dense trajectories proposed by \citet{wang11cvpr,wang13ijcv} using a trajectory description, HOG and HOF~\citep{laptev08cvpr}, and MBH~\citep{dalal06eccv}. On the other hand we propose two approaches based on body pose tracks, motivated from work in the sensor-based activity recognition community~\citep{zinnen09iswc}.
+From the experimental results we can conclude that fine grained activity recognition is clearly beyond the current state-of-the-art and that further research is required to 
+address this more realistic and challenging setting. 
+
+%\todo{bernt: the following contains bits and pieces from the initial intro}
+%  \item[Most people have done classification, we do detection] 
+%Although activities are per definition over a time span, it is possible to recognize them from single images\citep{yao11iccv,everingham11pascal}. When dealing with image sequences, a classification scenario has been the focus of many approaches~\citep{taralova11iccv,singh11iccv,chakraborty11iccv} while for detection, \ie\ also estimating start and end time, approaches are very limited in the number of activity classes to distinguish~\citep{}. While activity classification is an important intermediate step and maybe sufficient task for some domains, in many domains, such  smart homes or robotics, we additionally have to estimate the correct interval and/or order of activities. 
+%This focus on approaches towards classification rather than detection is also reflected in the availability of larger-scale datasets\citep{chakraborty11iccv}, only few larger-scale detection databases are available~\citep{}.
+
+%In this work we propose a large dataset for activity recognition of \DBnActivities cooking activities. Although we propose a classification challenge with this dataset we primarily promote the detection task, \ie estimating start and end time of a activity in addition to classifying it. There is a total of \DBnAnnos labeled activities in dataset.
+
+% \item[Detailed activity understanding is important]
+
+% To qualitatively understand what a person is doing it is not enough to know that a person is 
+ 
+ % \item[Human pose has advanced and can be used]
+% \textbf{something about pose in case we include this} 
+% Activities can be recognized by pose [recent reference where they let people to things with and without objects.].
+%Allow independence of object: \eg cutting cheese or cutting ham.
+
+%Pose allows exact spatial evaluation (where things happen).
+
+%\subsection{Contributions}
+
+
+  

@@ -1,0 +1,28 @@
+For our dataset of fine grained activities we video recorded participants cooking different dishes. 
+Videos are annotated with activity categories on time intervals and a subset of frames was annotated with human pose.
+
+\subsection{Database recording}
+We recorded \DBnSubjects participants performing \DBnActivities different cooking activities, such as \emph{cut slices}, \emph{pour}, or \emph{spice}. To record realistic behavior we did not record activities individually but asked participants to prepare one to six of a total of \DBnTasks dishes such as \emph{fruit salad} or \emph{cake}  containing several cooking activities. In total we recorded \DBnVideoSeq videos with a total length of more than \DBhours hours or \DBnFrames frames.
+
+In order to get a variation in activities we always told a participant beforehand to prepare a certain dish (\eg \emph{salad}), including a set of ingredients (\emph{cucumber, tomatoes, cheese}) and potential tools (\emph{grater}) to use. Instructions were given verbally and frequently participants diverted from the instructions by changing tools, and/or ingredients adding to the variability of the activities. Prior to recording par\-ti\-ci\-pants were shown our kitchen and places of the required tools and ingredients to feel at home. During the recording participants could ask questions in case of problems and some listened to music. We always start the recording prior to the participant entering the kitchen and end it once the participant declares to be finished, \ie\ we do not include the final cleaning process. There was a variety of \DBnTasks dishes, namely \emph{sandwich, salad, fried potatoes, potato pancake, omelet, soup, pizza, casserole, mashed potato, snack plate, cake, fruit salad, cold drink}, and \emph{hot drink}. Within these dishes each person used different ingredients resulting in very dissimilar videos, \eg some participants cooked a packet soup while others prepared it from scratch. Dish preparation time varies from 3 to 41 minutes. For statistics on the activities see \tableref{tbl:cvpr12:annostats}.
+%  
+Most participants were university students from different disciplines recruited by e-mail and publicly posted flyers and paid; cooking experience ranging from beginner cookers to amateur chefs.  %10~Euro
+
+We recorded  in our kitchen (see \figref{fig:cvpr12:teaser}(a)) with a 4D View Solutions system using a Point Grey Grashopper camera with 1624x1224 pixel resolution at 29.4fps and global shutter. The camera is attached to the ceiling, recording a person working at the counter from the front. 
+%We believe that this to be a realistic setup for a smart home environment. 
+We  provide the sequences as single frames (jpg with compression set to 75) and as video streams (compressed weakly with mpeg4v2 at a bitrate of 2500).
+
+\subsection{Database annotations}
+\label{sec:cvpr12:db:annos}
+
+Activities were annotated with a two-stage revision phase by 6 people with start and end frame as well as the activity categories (see \tableref{tbl:cvpr12:annostats}) using the annotation tool Advene \citep{aubert07mm}. 
+%Annotators were allowed to calibrate semantics of different annotations. 
+The dataset contains a total of \DBnAnnos annotations of \DBnActivities activity categories. This includes a background activity for the detection task which is  generated automatically for all intervals without any other manual annotation for at least 30 frames (1 second), \eg because the person is not (yet) in the scene or doing an unusual activity which is not annotated.
+
+A second type of annotation is articulated human pose. 
+A subset of frames has been annotated with shoulder, elbow, wrist, and hand joints as well as head and torso.
+We have 1,071 frames of 10 subjects for training (5 subjects are from separate recordings). For testing we sample 1,277 frames from all activities with the remaining 7 subjects.
+% Sikandar can you write something about what exactly annotated, including number of poses for training (and test set).
+
+We also provide intermediate representations of holistic video descriptors, human pose detections, tracks, and features defined on the body pose (\secref{sec:cvpr12:approaches}). We hope this will foster research at different levels of activity recognition.
+

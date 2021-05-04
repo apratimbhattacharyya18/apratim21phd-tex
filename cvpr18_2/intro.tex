@@ -1,0 +1,53 @@
+\begin{table}
+\begin{tabular}{cccccc }
+    &
+    \shortstack{%
+        \addvbuffer[-0pt]{\includegraphics[width=0.185\textwidth, height=0.075\textheight]{"teaser/1_gt"}}\\
+        \addvbuffer[-0pt]{\includegraphics[width=0.185\textwidth, height=0.075\textheight]{"teaser/2_gt"}}
+    }
+    & 
+    \shortstack{%
+        \addvbuffer[-0pt]{\includegraphics[width=0.185\textwidth, height=0.075\textheight]{"teaser/1_t_5"}}\\
+        \addvbuffer[-0pt]{\includegraphics[width=0.185\textwidth, height=0.075\textheight]{"teaser/2_t_5"}}
+    }
+    & 
+    \shortstack{%
+        \addvbuffer[-0pt]{\includegraphics[width=0.185\textwidth, height=0.075\textheight]{"teaser/1_t_10"}}\\
+        \addvbuffer[-0pt]{\includegraphics[width=0.185\textwidth, height=0.075\textheight]{"teaser/2_t_10"}}
+    }
+    & 
+    \shortstack{%
+        \addvbuffer[-0pt]{\includegraphics[width=0.185\textwidth, height=0.075\textheight]{"teaser/1_t_15"}}\\
+        \addvbuffer[-0pt]{\includegraphics[width=0.185\textwidth, height=0.075\textheight]{"teaser/2_t_15"}}
+    }
+    &
+        \addvbuffer[-0pt]{\includegraphics[height=0.15\textheight]{"teaser/bar"}}\\
+    
+    
+    &\textbf{Last Observation: $t$} & \textbf{Prediction: $t$ + 5} & \textbf{Prediction: $t$ + 10} & \textbf{Prediction: $t$ + 15} & \textbf{Probability} \\
+    
+    \\
+    \end{tabular}
+  %\includegraphics[width=\linewidth]{}%\bigskip
+    \caption{ Our predictive distribution upto $t$ + 15 frames. The heat map encodes the probability of a certain pixel belonging to the person. The variance of the distribution encodes the uncertainty. \emph{Row 1}: Low uncertainty.  \emph{Row 2}: High uncertainty.}
+   \label{fig:frames}
+\end{table}
+
+
+While methods for automatic scene understanding have progressed rapidly over the past years, it is just one key ingredient for assisted and autonomous driving. Human capabilities go beyond inference of scene structure and encompass a broader type of scene understanding that also lends itself to anticipating the future. 
+
+Anticipation is key in preventing collisions by predicting future movements of dynamic agents e.g. people and cars in inner cities. It is also the key to operating at practical safety distances. Without anticipation, domain knowledge and experience, drivers would have to maintain an equally large safety distance to all objects, which is clearly impractical in dense and cluttered inner city traffic. Additionally, anticipation enables decision making, e.g. passing cars and pedestrians while respecting the safety of all participants. Even at conservative and careful driving speeds of $25   {\text{miles}}/{\text{hour}}$ ($\sim 40 {\text{km}}/{\text{hour}}$) in residential areas, the distance traveled in 1 second corresponds roughly to the breaking distance. Anticipation of traffic scenes on a time horizons of \emph{at least} 1 second would therefore enable safe driving at such speeds. 
+
+%Anticipation is possible, as the involved agents act typically in compliance with their individual goals and constraints of the scene structure. While the behavior of agents in traffic scenes is far from random, significant uncertainty in future states can accumulate due to the non-deterministic progression of the scene.
+
+%In safety critical systems like assisted and autonomous driving, it is crucial to model uncertainty \cite{rausand2014reliability}. 
+
+We propose the first approach to predict people (pedestrians including cyclists) trajectories from on-board cameras over such long-time horizons with uncertainty estimates. Due to the particular importance for safety, we are focusing on the people class. While pedestrian trajectory prediction has been approached in prior work, we propose the first approach for on-board prediction. As predictions are made with respect to the moving vehicle, we formulate a novel two stream model for long-term person bounding box prediction and vehicle ego motion (odometry).  In contrast to prior work, we model both \emph{aleatoric} (observation) uncertainty and \emph{epistemic} (model) uncertainty \cite{der2009aleatory} in order to arrive at an estimate of the overall uncertainty.
+
+Our contributions in detail are:
+\begin{enumerate*}
+    \item First approach to long-term prediction of pedestrian bounding box sequences from a mobile platform;
+    \item Novel sequence to sequence model which provides a theoretically grounded approach to quantify uncertainty associated with each prediction;
+    \item Detailed experimental evaluation of alternative architectures illustrating the importance and effectiveness of using a two-stream architecture;
+    \item Analysis of dependencies between uncertainty estimates and actual prediction error leading to an \emph{empirical error bound}.
+\end{enumerate*}

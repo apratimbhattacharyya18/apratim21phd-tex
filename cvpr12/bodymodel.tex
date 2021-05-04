@@ -1,0 +1,151 @@
+%\subsubsection{Body Model}
+\newcommand{\midruleBM}{\cmidrule(lr){1-1}  \cmidrule(lr){2-7} \cmidrule(lr){8-8}}
+
+\begin{table}[t]
+% \begin{scriptsize}
+\begin{center}
+\begin{tabular}{lrrrrrrr}
+\toprule
+ &   &  & \multicolumn{2}{c}{upper arm} & \multicolumn{2}{c}{lower arm}  & \\
+Method &  Torso & Head &  \multicolumn{1}{c}{r} & \multicolumn{1}{c}{l} & \multicolumn{1}{c}{r} & \multicolumn{1}{c}{l}  & All\\
+\midruleBM
+\multicolumn{5}{l}{\textbf{Original models}}\\
+CPS~\citep{Sapp10cascadedmodels}                   & \textbf{67.1}    & 0.0             & 53.4            & 48.6             & \textbf{47.3}       & 37.0               & 42.2\\
+% \hline
+FMP~\citep{confcvprYangR11}                        & 63.9             & \textbf{72.1}   & \textbf{60.2}   & \textbf{59.6}    & 42.1                & \textbf{46.7}      & \textbf{57.4}\\
+PS~\citep{Andriluka:2009}                          & 58.0             & 45.5            & 50.5            & 57.2             & 43.3                & 38.8               & 48.9\\
+% \hline
+\midruleBM
+\multicolumn{5}{l}{\textbf{Trained on our data}}\\
+FMP~\citep{confcvprYangR11}                        & 79.6             &	67.7           &	60.7           & 60.8	            &	50.1              	&	50.3	             & 61.5\\
+% \hline
+PS~\citep{Andriluka:2009}                          & \textbf{80.1}    & \textbf{80.0}   & \textbf{67.8}   &	\textbf{69.6}   & 48.9                & 49.6               & 66.0\\
+FPS (our model)                                   & 78.5             & 79.4            & 61.9            & 64.1             & \textbf{62.4}       & \textbf{61.0}      & \textbf{67.9}\\
+\bottomrule
+\end{tabular}
+\end{center}
+\caption[Comparison of 2D upper body pose estimation methods]{Comparison of 2D upper body pose estimation methods, percentage of correct parts (PCP).\vspace{0cm}}
+\label{tab:pose}
+% \end{scriptsize}
+\end{table}
+\subsection{Pose-based approach}
+\label{sec:cvpr12:approach:pose}
+
+
+
+%Intuitively human body configurations and motions should provide strong cues for
+%the underlying activity. Therefore, a
+The first approach 
+is based on estimates of 
+human body configurations. The purpose of this approach is to investigate the
+complexity of the pose estimation task on our dataset and  to evaluate the
+applicability of state-of-the-art pose estimation methods in the context of
+activity recognition.
+
+Although pose-based activity recognition approaches were shown to be
+effective using inertial sensors
+\citep{zinnen09iswc}, they have not been evaluated when the poses
+are estimated from monocular images. Inspired by \citet{zinnen09iswc} we build on
+a similar feature set, computing it from the temporal sequence of 2D body configurations.
+In the following we first evaluate the state-of-the-art in 2D pose estimation in
+the context of our dataset. We then introduce our pose-based activity
+recognition approach that builds on the best performing method.
+% in this evaluation.
+
+% combines person detection, 2D pose estimation, extraction of
+% temporal features and activity detection and classification.
+
+
+
+\subsubsection{2D human pose estimation}
+In order to identify the best 2D pose estimation approach 
+we use our 2D body joint annotations (see \secref{sec:cvpr12:db:annos}). 
+We compare the performance of three recently proposed
+ methods: the cascaded pictorial structures (CPS)
+\citep{Sapp10cascadedmodels}, the flexible mixture of parts model (FMP)
+\citep{confcvprYangR11} and the implementation of pictorial structures model (PS)
+of \citet{Andriluka:2009}. Notice that these methods are designed for
+generic 2D pose estimation. In particular they do not rely on  background
+subtraction or strong assumptions on the appearance of body limbs (\eg skin
+color). %We explicitly avoid tailoring any of them to our domain
+%in order to keep our evaluation as generic as possible.
+
+For evaluating these methods we adopt the PCP measure (percentage of correct parts) proposed by \citet{Ferrari:2008:PSS} that computes the percentage of body parts correctly
+localized by the pose estimation method. A body part is considered to be
+localized correctly if the predicted endpoints of the part are within half of
+the part length from their ground-truth positions. We first compare the implementations and pre-trained models made publicly available by
+the authors. Results are shown in the upper part of \tableref{tab:pose}. The FMP
+model performs best, likely due to its ability to handle foreshortening of the
+body parts that occurs frequently in our data. 
+
+
+
+
+To push the performance
+further we retrain the two best performing models (FPM and PS) on our training
+set, which results in improvements from 57.4 to 61.5 PCP for the FMP model and from 48.9 to 66 PCP for the PS model (\tableref{tab:pose}, last column). While demonstrating best results, the PS model
+is still defined in terms of rigid body parts, which is suboptimal for our
+task. In order to address that we define a flexible variant of the PS model (FPS) that
+instead of 6 parts used in the original model, consists of 10 parts
+corresponding to head, torso, as well as left and right shoulder, elbow, wrist and
+hand. While overall the extended FPS model improves over PS model only by 1.9 PCP
+(66.0 PCP for PS models \vs 67.9 PCP for FPS), it improves the detection of lower
+arms by more than 11 PCP which are most important for fined-grained activity recognition. Based on  this
+comparison we rely on the FPS model in the subsequent steps of our pose-based
+activity recognition pipeline. \figref{fig:cvpr12:poseestimates} visualizes several examples
+of the estimated poses for FPS. Notice that we can correctly estimate poses for a variety of
+activities and body configurations while maintaining precise localization of the
+body joints.  
+
+
+To extract the trajectories of body joints, an option is to extend our
+pose estimation to the temporal domain. However, temporal coupling of
+joint positions significantly complicates inference and approaches of this kind
+have only recently begun to be explored in the literature
+\citep{Sapp:2011:PHM}. Moreover, our dataset consists of over 800,000 frames and to deal with this sheer complexity of
+estimating human poses for this dataset we choose a different avenue which relies on search space reduction \citep{Ferrari:2008:PSS} and tracking. To that
+end we first estimate poses over a sparse set of frames (every 10-th frame
+in our evaluation) and then track over a fixed
+temporal neighborhood of 50 frames forward and backward. For tracking we match SIFT features for each joint separately across consecutive frames. To discard outliers we find the largest
+group of features with coherent motion and update the joint position based on
+the motion of this group. In order to reduce the search space further we use a person detector \citep{Felzenszwalb2010PAMI} and estimate
+the pose of the person within the detected region with 50\% border around.
+% We retrain the detector on the same training set as used to train the 2D pose
+% estimation model.
+
+This approach combines the generic appearance model learned at training time with the specific appearance (SIFT)
+features computed at test time. When initialized with successful pose estimates
+it provides reliable tracks of joints in the local temporal neighborhood
+(see \figref{fig:cvpr12:tracks}). 
+% and supplemental material for the examples).
+
+%\subsubsection{Activity recognition based on the body model}
+ 
+
+\bgroup
+\tabcolsep 0.75pt
+\renewcommand{\arraystretch}{0.5}
+
+\newlength{\poseswidth}
+\setlength{\poseswidth}{2.2cm}
+
+\begin{figure}[t]
+\begin{center}
+\begin{tabular}{ccc@{\hspace{1.5mm}}|@{\hspace{1.5mm}}c}
+\includegraphics[width=\poseswidth]{fig/img111.jpg}&
+\includegraphics[width=\poseswidth]{fig/img127.jpg}&
+\includegraphics[width=\poseswidth]{fig/img221.jpg}&
+\includegraphics[width=\poseswidth]{fig/img051.jpg}\\
+\includegraphics[width=\poseswidth]{fig/img009.jpg}&
+\includegraphics[width=\poseswidth]{fig/img305.jpg}&
+\includegraphics[width=\poseswidth]{fig/img239.jpg}&
+\includegraphics[width=\poseswidth]{fig/img306.jpg}\\
+\end{tabular} 
+\end{center}
+\caption[Examples of correctly estimated 2D upper body poses and typical failure
+  cases.]{Examples of correctly estimated 2D upper body poses (left) and typical failure
+  cases (right).\vspace{0cm}}
+\label{fig:cvpr12:poseestimates}
+\vspace{0pt}
+\end{figure}
+\egroup

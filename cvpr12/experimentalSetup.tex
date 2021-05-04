@@ -1,0 +1,12 @@
+We propose the following experimental setup for our dataset and include evaluation scripts with the dataset. 
+%
+We have a total of 12 subjects, of which 5 subjects are used to train the body pose model. 
+The remaining 7 subjects are used to perform leave-one-person-out cross-validation.
+That means that for the 7 cross-validation rounds, training of the activity recognition approaches 
+can use the data from the other 11 subjects. 
+%For training the activity recognition approaches (pose-based and holistic) we do leave-one-out, but never test on the 5 subjects used for training the body pose model, \ie only 7 subjects are under test, each time training on 11 and testing on one.
+
+We report multi-class precision (Pr) and recall (Rc), as well as single class average precision (AP), taking the mean over all test runs.
+If there is no ground truth label for a certain activity for a given test run (=subject), we ignore this subject when computing mean AP for that particular activity.
+For detection we use the midpoint hit criterion to decide on the correctness of a detection, \ie the midpoint of the detection has to be within the groundtruth. If a second detection fires for one groundtruth label, it is counted as 
+false positive. We provide evaluation scripts for comparable results.

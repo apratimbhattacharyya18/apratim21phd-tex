@@ -1,0 +1,7 @@
+We propose the novel task of boundary prediction and demonstrate accurate results with our CMSC model. We argue for the key design choices,  
+\begin{enumerate*}
+    \item A wide receptive field allowing the model to learn complex spatio-temporal dependencies.
+    \item Accurate prediction at each time-step with a fully convolutional setup without any bottleneck layers.
+    \item The context which allows for information sharing thus leading to global consistency. 
+\end{enumerate*}
+ We obtain sharp predictions using L2 loss (in contrast to RGB prediction, which leads to very blurry results with L2 loss). Predictions by our CMSC model on diverse scenarios shows that it developed a data-driven model of future boundary motions over long time horizons. This includes dynamics of moving agents and  billiard balls. Moreover, while not being our primary goal, our predicted boundaries lead to sharper RGB video predictions via a fusion-based approach.

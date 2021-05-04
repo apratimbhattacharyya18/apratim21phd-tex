@@ -1,0 +1,217 @@
+\def\year{2018}\relax
+%File: formatting-instruction.tex
+\documentclass[letterpaper]{article} %DO NOT CHANGE THIS
+\usepackage{aaai18}  %Required
+\usepackage{times}  %Required
+\usepackage{helvet}  %Required
+\usepackage{courier}  %Required
+\usepackage{url}  %Required
+\usepackage{graphicx}  %Required
+\frenchspacing  %Required
+\usepackage{epsfig}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{setspace}
+\usepackage{subcaption}
+\usepackage{grffile}
+\usepackage{verbatim}
+\usepackage{booktabs}
+\usepackage{placeins}
+\usepackage[skip=0pt]{caption}
+\usepackage{array}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{setspace}
+\usepackage[inline]{enumitem}
+
+\usepackage[pagebackref=true,breaklinks=true,linkcolor={},bookmarks=false]{hyperref}
+\nocopyright
+
+\newcommand{\myparagraph}[1]{
+\vspace{0.1cm}\noindent
+\textbf{#1}
+\hspace{0.1cm}
+}
+
+\newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+
+\addtolength{\textfloatsep}{-5mm}
+\addtolength{\floatsep}{-5mm}
+
+\usepackage{color}
+\setlength{\pdfpagewidth}{8.5in}  %Required
+\setlength{\pdfpageheight}{11in}  %Required
+%PDF Info Is Required:
+  \pdfinfo{
+/Title (2018 Formatting Instructions for Authors Using LaTeX)
+/Author (AAAI Press Staff)}
+\setcounter{secnumdepth}{0}  
+ \begin{document}
+% The file aaai.sty is the style file for AAAI Press 
+% proceedings, working notes, and technical reports.
+%
+\title{Supplementary Material}
+\author{Paper ID: 1633}
+\maketitle
+
+\section{Introduction}
+We include additional results as images (in this document) and a video (as a file) as supplementary material. We include supporting descriptions for the video file in this document.
+
+\section{Results on Moving MNIST}
+
+\begin{figure*}[!h]
+  
+  \centering
+  \renewcommand{\arraystretch}{0.2}
+  \begin{tabular}{ C{1.07cm}C{1.07cm}C{1.07cm}C{1.07cm}C{1.07cm}C{1.07cm}C{1.07cm}C{1.07cm}C{1.07cm}C{1.07cm}C{1.07cm}C{1.07cm}C{1.07cm}C{1.07cm}C{1.07cm}C{1.07cm} }
+
+    \includegraphics[width=0.070\textwidth]{"images/supp_fig_mnist/seq_1/t_m_3"} &
+    \includegraphics[width=0.070\textwidth]{"images/supp_fig_mnist/seq_1/t_m_2"} &
+    \includegraphics[width=0.070\textwidth]{"images/supp_fig_mnist/seq_1/t_m_1"} &
+    \includegraphics[width=0.070\textwidth]{"images/supp_fig_mnist/seq_1/t_m_0"} &
+    \includegraphics[width=0.070\textwidth]{"images/supp_fig_mnist/seq_1/pred_0"}&
+    \includegraphics[width=0.070\textwidth]{"images/supp_fig_mnist/seq_1/pred_1"}&
+    \includegraphics[width=0.070\textwidth]{"images/supp_fig_mnist/seq_1/pred_2"}&
+    \includegraphics[width=0.070\textwidth]{"images/supp_fig_mnist/seq_1/pred_3"}&
+    \includegraphics[width=0.070\textwidth]{"images/supp_fig_mnist/seq_1/pred_4"}&
+    \includegraphics[width=0.070\textwidth]{"images/supp_fig_mnist/seq_1/pred_5"}&
+    \includegraphics[width=0.070\textwidth]{"images/supp_fig_mnist/seq_1/pred_6"}&
+    \includegraphics[width=0.070\textwidth]{"images/supp_fig_mnist/seq_1/pred_7"}\\
+    
+    \includegraphics[width=0.070\textwidth]{"images/supp_fig_mnist/seq_2/t_m_3"} &
+    \includegraphics[width=0.070\textwidth]{"images/supp_fig_mnist/seq_2/t_m_2"} &
+    \includegraphics[width=0.070\textwidth]{"images/supp_fig_mnist/seq_2/t_m_1"} &
+    \includegraphics[width=0.070\textwidth]{"images/supp_fig_mnist/seq_2/t_m_0"} &
+    \includegraphics[width=0.070\textwidth]{"images/supp_fig_mnist/seq_2/pred_0"}&
+    \includegraphics[width=0.070\textwidth]{"images/supp_fig_mnist/seq_2/pred_1"}&
+    \includegraphics[width=0.070\textwidth]{"images/supp_fig_mnist/seq_2/pred_2"}&
+    \includegraphics[width=0.070\textwidth]{"images/supp_fig_mnist/seq_2/pred_3"}&
+    \includegraphics[width=0.070\textwidth]{"images/supp_fig_mnist/seq_2/pred_4"}&
+    \includegraphics[width=0.070\textwidth]{"images/supp_fig_mnist/seq_2/pred_5"}&
+    \includegraphics[width=0.070\textwidth]{"images/supp_fig_mnist/seq_2/pred_6"}&
+    \includegraphics[width=0.070\textwidth]{"images/supp_fig_mnist/seq_2/pred_7"}\\
+    
+    \includegraphics[width=0.070\textwidth]{"images/supp_fig_mnist/seq_3/t_m_3"} &
+    \includegraphics[width=0.070\textwidth]{"images/supp_fig_mnist/seq_3/t_m_2"} &
+    \includegraphics[width=0.070\textwidth]{"images/supp_fig_mnist/seq_3/t_m_1"} &
+    \includegraphics[width=0.070\textwidth]{"images/supp_fig_mnist/seq_3/t_m_0"} &
+    \includegraphics[width=0.070\textwidth]{"images/supp_fig_mnist/seq_3/pred_0"}&
+    \includegraphics[width=0.070\textwidth]{"images/supp_fig_mnist/seq_3/pred_1"}&
+    \includegraphics[width=0.070\textwidth]{"images/supp_fig_mnist/seq_3/pred_2"}&
+    \includegraphics[width=0.070\textwidth]{"images/supp_fig_mnist/seq_3/pred_3"}&
+    \includegraphics[width=0.070\textwidth]{"images/supp_fig_mnist/seq_3/pred_4"}&
+    \includegraphics[width=0.070\textwidth]{"images/supp_fig_mnist/seq_3/pred_5"}&
+    \includegraphics[width=0.070\textwidth]{"images/supp_fig_mnist/seq_3/pred_6"}&
+    \includegraphics[width=0.070\textwidth]{"images/supp_fig_mnist/seq_3/pred_7"}\\
+    
+    \includegraphics[width=0.070\textwidth]{"images/supp_fig_mnist/seq_4/t_m_3"} &
+    \includegraphics[width=0.070\textwidth]{"images/supp_fig_mnist/seq_4/t_m_2"} &
+    \includegraphics[width=0.070\textwidth]{"images/supp_fig_mnist/seq_4/t_m_1"} &
+    \includegraphics[width=0.070\textwidth]{"images/supp_fig_mnist/seq_4/t_m_0"} &
+    \includegraphics[width=0.070\textwidth]{"images/supp_fig_mnist/seq_4/pred_0"}&
+    \includegraphics[width=0.070\textwidth]{"images/supp_fig_mnist/seq_4/pred_1"}&
+    \includegraphics[width=0.070\textwidth]{"images/supp_fig_mnist/seq_4/pred_2"}&
+    \includegraphics[width=0.070\textwidth]{"images/supp_fig_mnist/seq_4/pred_3"}&
+    \includegraphics[width=0.070\textwidth]{"images/supp_fig_mnist/seq_4/pred_4"}&
+    \includegraphics[width=0.070\textwidth]{"images/supp_fig_mnist/seq_4/pred_5"}&
+    \includegraphics[width=0.070\textwidth]{"images/supp_fig_mnist/seq_4/pred_6"}&
+    \includegraphics[width=0.070\textwidth]{"images/supp_fig_mnist/seq_4/pred_7"}\\
+    
+    \addlinespace[+1ex]
+    \multicolumn{4}{c}{$\xleftarrow{\makebox[1.65cm]{}}$ Observation $\xrightarrow{\makebox[1.67cm]{}}$} &\multicolumn{8}{c}{$\xleftarrow{\makebox[4.75cm]{}}$ Prediction $\xrightarrow{\makebox[4.77cm]{}}$} \\
+    
+    \addlinespace[+1ex]
+    {\textbf{$t-3$}} &{\textbf{$t-2$}} &{\textbf{$t-1$}} &{\textbf{$t$}} 
+    &{\textbf{$t+1$}} &{\textbf{$t+2$}}  &{\textbf{$t+3$}}  &{\textbf{$t+4$}}
+    &{\textbf{$t+5$}} &{\textbf{$t+6$}}  &{\textbf{$t+7$}} &{\textbf{$t+8$}}  \\
+    \addlinespace[+1ex]
+    
+    \end{tabular}
+  \caption{Example predictions on the moving MNIST dataset by our CMS model.}
+  \label{fig:mnist}
+\end{figure*}
+
+We include results on the moving MNIST dataset \cite{srivastava2015unsupervised} to help compare our Convolutional Multi-Scale architecture against other frame prediction architectures. This dataset is suitable for this task because like boundary images the images in the moving MNIST dataset are also in the same domain [0,1]. However, we do not refer to this dataset in the main article as moving MNIST digits behave very differently compared to object boundaries. As the moving MNIST digits are of fixed (small) size of 64x64 pixels, we do not use a context and thus use our CMS model for evaluation (which observes the full input image). This allows for fair comparison against \cite{srivastava2015unsupervised,patraucean2015spatio,kalchbrenner2016video} which do not have a context and observes the full input image. We report quantitative results for prediction one time-step into the future (as in \cite{srivastava2015unsupervised,patraucean2015spatio}) in \autoref{tab:mnist} using the Cross Entropy Loss \cite{srivastava2015unsupervised}. Our CMS model outperforms \cite{srivastava2015unsupervised,patraucean2015spatio}. Moreover, qualitative results in \autoref{fig:mnist} shows that our CMS model predicts accurately eight time-steps into the future. The much more complex model from \cite{kalchbrenner2016video} performs better. However, this comparison shows that our CMS model compares favorably against other frame prediction models, while beating models with comparable number of parameters.
+
+\begin{table}[h]
+\vspace{-0.5cm}
+  \centering
+   \resizebox{\linewidth}{!}{
+    \begin{tabular}{@{}cc@{}}\\
+  \toprule
+    \textbf{Model}  &\textbf{Cross Entropy Loss} \\
+    \hline
+    \cite{srivastava2015unsupervised}      & 341.2 \\ 
+    \cite{patraucean2015spatio}      &179.8 \\
+    Our CMS & \textbf{165.0}  \\
+    \cite{kalchbrenner2016video} & 87.6\\
+    \bottomrule
+  \end{tabular}
+  }
+
+   \caption{Evaluation on moving MNIST}
+  \label{tab:mnist}
+\end{table}
+
+\begin{figure*}[t]
+  
+  \centering
+  \begin{tabular}{ C{3.4cm}C{3.4cm}C{3.4cm}C{3.4cm} }
+  
+   \toprule
+   \textbf{Last Observation: $t$} & \textbf{Prediction: $t$ + 1} & \textbf{Prediction: $t$ + 2} &  \textbf{Prediction: $t$ + 4} \\
+    \midrule
+    \multicolumn{4}{c}{\textbf{``Optic Flow'' baseline.}} \\
+    \midrule
+    \includegraphics[width=0.21\textwidth]{"images/fig4/1_gt"} &
+    \includegraphics[width=0.21\textwidth]{"images/supp_fig_vsb100/3_t_1"} &
+    \includegraphics[width=0.21\textwidth]{"images/supp_fig_vsb100/3_t_2"} &
+    \includegraphics[width=0.21\textwidth]{"images/supp_fig_vsb100/3_t_4"} \\
+    \midrule
+    % \addlinespace[-3.4ex]
+     \multicolumn{4}{c}{\textbf{Convolutional Single Scale (CSS).}} \\
+     \midrule
+    \includegraphics[width=0.21\textwidth]{"images/fig4/1_gt"}&
+    \includegraphics[width=0.21\textwidth]{"images/supp_fig_vsb100/4_t_1"}&
+    \includegraphics[width=0.21\textwidth]{"images/supp_fig_vsb100/4_t_2"}&
+    \includegraphics[width=0.21\textwidth]{"images/supp_fig_vsb100/4_t_4"}\\
+    %\addlinespace[-3.4ex]
+    \midrule
+    \multicolumn{4}{c}{\textbf{Convolutional Multi Scale (CMS).}} \\
+    \midrule
+    \includegraphics[width=0.21\textwidth]{"images/fig4/1_gt"}&
+    \includegraphics[width=0.21\textwidth]{"images/supp_fig_vsb100/5_t_1"}&
+    \includegraphics[width=0.21\textwidth]{"images/supp_fig_vsb100/5_t_2"}&
+    \includegraphics[width=0.21\textwidth]{"images/supp_fig_vsb100/5_t_4"}\\
+    \midrule
+    \multicolumn{4}{c}{\textbf{Convolutional Multi Scale Context (CMSC).}} \\
+    \midrule
+    \includegraphics[width=0.21\textwidth]{"images/fig4/1_gt"}&
+    \includegraphics[width=0.21\textwidth]{"images/fig4/1_t_1"}&
+    \includegraphics[width=0.21\textwidth]{"images/fig4/1_t_2"}&
+    \includegraphics[width=0.21\textwidth]{"images/fig4/1_t_4"}\\
+    \bottomrule
+    \end{tabular}
+  \caption{Prediction on \emph{airplane} sequence from VSB100. Correct boundaries predictions are encoded in green. Missed boundaries are encoded in yellow. Wrong boundaries are encoded in red.}
+  \label{fig:exex}
+\end{figure*}
+
+\section{Additional Results on VSB100}
+Here, we show predictions at one, two and four steps ($t$ + 1, $t$ + 2, $t$ + 4) in the future from a fixed time point on the airplane sequences of VSB100. We show the predictions in \autoref{fig:exex}. We use the same color coding as in the main article. That is, correct boundaries predictions are encoded in green, missed boundaries are encoded in yellow and wrong boundaries are encoded in red.
+
+As expected from the quantitative performance in Figure 5 of the main article, the ``Optic flow'' baseline does not perform well. This method incorrectly translates the boundaries which lead to many boundaries being missed especially at t + 4. Compared to our CMSC model, the CSS and CMS models are unable to propagate motion in the long-term, leading to the disappearance of boundaries at t + 4. This highlights the importance of the context. 
+
+\myparagraph{Running Time.} Running time is GPU model and video resolution dependent. On the latest Titan X GPU, our CMSC model takes approximately 16 hours to train on the VSB100 and real billiards datasets and 10 hours on synthetic billiards (1 ball) dataset. During the test phase, prediction of one future frame of VSB100 (640$\times$480 pixels) takes 1.03 seconds, synthetic billiards (256$\times$256) 136 milliseconds and real billiards (320$\times$240) 168 milliseconds on average.
+
+\section{Video Results}
+
+We also include as video (\textbf{video.mp4}), results on,  
+\begin{enumerate*}
+    \item Synthetic billiard sequences involving multiple balls.
+    \item Example of sharpening RGB predictions on VSB100.
+\end{enumerate*}
+
+\bibliography{egbib}
+\bibliographystyle{aaai}
+
+\end{document}

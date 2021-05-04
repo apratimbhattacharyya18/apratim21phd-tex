@@ -1,0 +1,189 @@
+We evaluate our model on real-world on-board street scene data and show predictions over a 1 second time horizon along with the associated uncertainty.
+
+\begin{table*}[t]
+\centering
+\setlength\tabcolsep{4pt}
+\begin{minipage}{0.67\textwidth}
+\centering
+
+\begin{tabular}{cccccccc}
+\toprule
+&& \multicolumn{3}{c}{MSE} & \multicolumn{3}{c}{$\operatorname{\mathcal{L}}$} \\
+\cmidrule{3-8}
+&& \multicolumn{3}{c}{$| \text{B}_{\text{p}}|$} & \multicolumn{3}{c}{$| \text{B}_{\text{p}}|$} \\
+ Method & Odometry & 4 & 6 & 8 & 4 & 6 & 8 \\
+\midrule
+Kalman Filter & None & 1938 & 1289 & 1098 & x & x & x \\ 
+LSTM & None & 692 & 663 & 650 & 8.11 & 7.99 & 7.77 \\
+LSTM-Aleatoric & None & 772 & 758 & 750 & 5.92 & 5.81 & 5.54 \\
+LSTM-Bayesian & None & \textbf{647} & \textbf{624} & \textbf{618} & \textbf{4.31} & \textbf{4.26} & \textbf{4.13} \\
+\midrule
+LSTM-Bayesian & Ground-truth & 374 & 358 & 343 & 3.94 & 3.93 & 3.88\\ 
+\bottomrule
+\end{tabular}
+\caption{Bounding box prediction error with varying $| \text{B}_{p}|$.}
+\label{tab:stream1eval}
+\end{minipage}%
+\hfill
+\begin{minipage}{0.32\textwidth}
+\centering
+\begin{tabular}{ccc}
+\toprule
+Method &  MSE & $\operatorname{\mathcal{L}}$\\
+\midrule
+Social LSTM \cite{alahi2016social} & 1514 & 5.63 \\
+LSTM-Bayesian & 695 & 3.97 \\
+LSTM-Bayesian (centers) & 648 & x \\
+\bottomrule
+\end{tabular}
+\caption{Bounding box center prediction error.}
+\label{tab:bboxcenter}
+\end{minipage}
+\end{table*}
+
+\myparagraph{Dataset and Evaluation Metric.}
+We evaluate on the Cityscapes dataset \cite{Cordts2016Cityscapes} which contains 2975 training, 500 validation and 1525 test video sequences of length 1.8 seconds (30 frames). The video resolution is 2048$\times$1024 pixels. The sequences were recorded on-board a vehicle in inner cities. Each sequence has associated odometry information. Pedestrian tracks were automatically extracted using the tracking by detection method of \cite{siyu}. Detections were obtained using the Faster R-CNN based method of \cite{zhang2017citypersons} (statistics in supp mat). This mimics real world autonomous/assisted driving systems where detections/tracks are obtained with a state-of-the-art detector/tracker and we have to deal with noise introduced by the detector and on rare occasions detector false positives and tracker failures. We use as evaluation metric MSE in pixels (of the mean of the predictive distribution) and the negative log-likelihood $\operatorname{\mathcal{L}}$. The $\operatorname{\mathcal{L}}$ metric measures the probability assigned to the true sequence by our predictive distribution. We report these metrics averaged across all time-steps and plots per time-step. We use a dropout rate of 0.35, $\lambda = 10^{-4}$ (tuned on validation set) and use 50 Monte-Carlo samples across all Bayesian models. 
+
+\myparagraph{Evaluation of Bounding Box Prediction.} We independently evaluate the first Bayesian LSTM stream of our two stream model, without conditioning it on predicted odometry. We predict 15 time-steps into the future and report the results in \autoref{tab:stream1eval}. We compare its performance with,
+\begin{enumerate*}
+    \item A linear Kalman filter baseline.
+    \item A homoscedastic LSTM encoder-decoder model (LSTM).
+    \item A heteroscedastic LSTM encoder-decoder (LSTM-Aleatoric).
+\end{enumerate*}
+ Finally, as an Oracle case, we compare against a Bayesian version in which the LSTM encoder can see the past odometry and the LSTM decoder can see the true future odometry at every time-step. We also vary the length of the conditioning sequence $| \text{B}_{\text{p}}|$ (training/test sets constant across varying $| \text{B}_{\text{p}}|$). In \autoref{tab:stream1eval}, we see that the homoscedastic LSTM model (2nd row) outperforms the linear Kalman filter (1st row).
+ This shows that many bounding box sequences have a complex motion and therefore cannot be modelled by a Kalman filter. We see that the heteroscedastic LSTM (LSTM-Aleatoric, 3rd row) outperforms the homoscedastic LSTM (2nd row) with respect to the $\operatorname{\mathcal{L}}$ metric. This means that the heteroscedastic LSTM learns to capture uncertainty and assigns higher probability to the true bounding box sequence. However, when epistemic uncertainty is not modelled, aleatoric uncertainty tried to compensate (as in \cite{kendall2017uncertainties}) and this leads to poorer MSE. Finally, our Bayesian LSTM (4th row) outperforms all other methods. This can be attributed to two factors,  
+ \begin{enumerate*}
+    \item The richer Gaussian mixture model fitted by the Bayesian LSTM can capture aleatoric and epistemic uncertainty and fits the data distribution better (evidenced by $\operatorname{\mathcal{L}}$ metric).
+    \item Additional introduced regularization (dropout and weight).
+ \end{enumerate*}
+ Furthermore, we see that increasing the length of the conditioning sequence improves model performance. However, the performance gain saturates at $| \text{B}_{past}| = 8$. Henceforth, we will report results using $| \text{B}_{\text{p}}| = \left\{4,8\right\}$ in the following. Finally, the odometry oracle case outperforms our Bayesian LSTM by a large margin. This shows that knowledge of vehicle odometry is crucial for good performance. 
+
+\myparagraph{Comparison with Social LSTM \cite{alahi2016social}.} We compare our Bayesian LSTM model with the vanilla LSTM \footnote{The version with social pooling did not converge on our dataset.} model of \cite{alahi2016social} (with 128 neurons) that predicts trajectories independently in \autoref{tab:bboxcenter}. Both models are trained to predict sequences of bounding box centers (length 15, given 8). Our Bayesian LSTM model performs better as it is more robust to mistakes during recursive prediction. The model of \cite{alahi2016social} observes true past pedestrian coordinates during training. However, during prediction it observes its own predictions causing errors to be propagated though multiple steps of prediction. Furthermore, we compare both methods to the centers obtained from the predictions of our Bayesian LSTM (second row of \autoref{tab:stream1eval}). The results show that we can improve upon bounding box center prediction by predicting bounding boxes.
+
+
+\begin{table}[!t]
+\centering
+\resizebox{\linewidth}{!}{
+\begin{tabular}{cccc}
+\toprule
+Method & Visual & Speed (m/sec)  & Angle (degrees)\\
+\midrule
+Constant & None & 1.62 & 26.85\\
+Kalman Filter & None & 0.053 & 2.44\\
+LSTM & None & 0.056 & 0.94\\
+LSTM & RGB & 0.048 & 0.88\\
+\bottomrule
+\end{tabular}
+}
+\caption{Odometry prediction error (MSE), $| \text{O}_{\text{p}}| = \left\{8\right\}$.}
+\label{fig:stream2eval}
+\end{table}
+
+\begin{table*}
+\begin{minipage}[b]{0.65\linewidth}
+\centering
+\begin{tabular}{ccccccc}
+\toprule
+&&& \multicolumn{2}{c}{MSE} & \multicolumn{2}{c}{$\operatorname{\mathcal{L}}$} \\
+\cmidrule{4-7}
+&&& \multicolumn{2}{c}{$| \text{B}_{\text{p}}|$} & \multicolumn{2}{c}{$| \text{B}_{\text{p}}|$} \\
+ Method & Streams  & Visual & 4 & 8 & 4 & 8 \\
+\midrule
+Kalman Filter & x & None & 1938 & 1098 & x & x\\
+LSTM-Bayesian & One & None & 572 & 546 & 4.03 & 3.97\\
+LSTM-Bayesian & Two & RGB & \textbf{532} & \textbf{505} & \textbf{3.99} & \textbf{3.92}\\
+\bottomrule
+\end{tabular}
+\caption{Evaluation of our Bayesian two stream model (\autoref{fig:modelarch}).}
+\label{tab:bothstreameval}
+\end{minipage}
+\hspace{0.5cm}
+\begin{minipage}[b]{0.32\linewidth}
+\centering
+\includegraphics[width=0.8\textwidth, keepaspectratio]{"plots/p1"}
+\caption{MSE per time-step of models in \autoref{tab:stream1eval} row 1, 4, 5 and \autoref{tab:bothstreameval} row 3.}
+\label{tab:perstepmse}
+\end{minipage}
+\end{table*}
+
+\begin{figure*}[h]
+
+\resizebox{\textwidth}{!}{
+\begin{tabular}{cccc}
+
+    \includegraphics[width=0.245\textwidth, height=0.15\textheight]{"plots/p6"} &
+    \includegraphics[width=0.245\textwidth, height=0.15\textheight]{"plots/p7"} &
+    \includegraphics[width=0.245\textwidth, height=0.15\textheight]{"plots/p8"} &
+    \includegraphics[width=0.245\textwidth, height=0.15\textheight]{"plots/p9"}\\
+
+\end{tabular}
+}
+\caption{Quality of our uncertainty metric: plots 1 and 2 - uncertainty versus squared error, plots 3 and 4 - uncertainty versus \emph{maximum} observed squared error.}\label{fig:uncertinitymetric}
+\end{figure*}
+
+\myparagraph{Evaluation of Odometry Prediction.} We train our odometry prediction LSTM encoder-decoder on the visual and odometry data of the Cityscapes training set. As many sequences have close to zero steering angle, we augment the training set to improve prediction performance. We reflect the steering angle and flip last observed image left to right of sequences with non-zero average steering angle. This increases the training data with non-zero steering angles by a factor of two.  We use MSE between the predicted future vehicle velocity and steering angles as evaluation metric. The velocity is in meters per second and angle in degrees. We include as baselines:
+\begin{enumerate*}
+    \item A constant steering predictor that predicts the last observed odometry.
+    \item A linear Kalman filter.
+    \item Our LSTM encoder-decoder without visual observation ($v = \left\{ v_{odo}\right\}$).
+\end{enumerate*}
+The third baseline is an ablation study. We observe no significant performance difference between $| \text{O}_{\text{p}}| = \left\{4\right\}$ and $| \text{O}_{\text{p}}| = \left\{8\right\}$. We evaluate 15 time-steps into the future and report the results in \autoref{fig:stream2eval}. We observe that the constant angle predictor performs significantly worse compared to the other baselines. This shows that the Cityscapes test set includes a significant number of non-trivial sequences with complex vehicle trajectories. We observe that the Kalman filter is able to quite accurately predict the vehicle speed. This is because in most vehicles are travelling with constant speed or accelerating/decelerating smoothly. However, the performance of the linear Kalman filter is worse compared to the LSTM models with respect to steering angle. This means that many sequences have non-linear vehicle trajectories. The superior performance of our model compared to the RNN baseline without visual observations, especially in the long-term shows that our CNN encoder extracts information useful for long-term prediction. We also show visual examples in suppmat.
+
+\begin{figure*}[!t]
+
+\resizebox{\textwidth}{!}{
+\begin{tabular}{cccc}
+\toprule
+
+Last Observation: $t$ & Prediction: $t$ + 5  & Prediction: $t$ + 10  & Prediction: $t$ + 15 \\
+
+\midrule
+
+    \includegraphics[width=0.18\textwidth, height=0.072\textheight]{"res/means/1_gt"} &
+    \includegraphics[width=0.18\textwidth, height=0.072\textheight]{"res/means/1_t_5"} &
+    \includegraphics[width=0.18\textwidth, height=0.072\textheight]{"res/means/1_t_10"} &
+    \includegraphics[width=0.18\textwidth, height=0.072\textheight]{"res/means/1_t_15"}\\
+    \addlinespace[-0.5ex]
+    \includegraphics[width=0.18\textwidth, height=0.072\textheight]{"res/means/2_gt"}&
+    \includegraphics[width=0.18\textwidth, height=0.072\textheight]{"res/means/2_t_5"}&
+    \includegraphics[width=0.18\textwidth, height=0.072\textheight]{"res/means/2_t_10"}&
+    \includegraphics[width=0.18\textwidth, height=0.072\textheight]{"res/means/2_t_15"} \\
+    \addlinespace[-0.5ex]
+    \includegraphics[width=0.18\textwidth, height=0.072\textheight]{"res/means/3_gt"}&
+    \includegraphics[width=0.18\textwidth, height=0.072\textheight]{"res/means/3_t_5"}&
+    \includegraphics[width=0.18\textwidth, height=0.072\textheight]{"res/means/3_t_10"}&
+    \includegraphics[width=0.18\textwidth, height=0.072\textheight]{"res/means/3_t_15"} \\
+    
+
+\hline
+\addlinespace[-2.4ex]
+    \\
+
+    \includegraphics[width=0.18\textwidth, height=0.072\textheight]{"res/dists/1_gt"} &
+    \includegraphics[width=0.18\textwidth, height=0.072\textheight]{"res/dists/1_t_5"} &
+    \includegraphics[width=0.18\textwidth, height=0.072\textheight]{"res/dists/1_t_10"} &
+    \includegraphics[width=0.18\textwidth, height=0.072\textheight]{"res/dists/1_t_15"}\\
+    \addlinespace[-0.5ex]
+    \includegraphics[width=0.18\textwidth, height=0.072\textheight]{"res/dists/2_gt"}&
+    \includegraphics[width=0.18\textwidth, height=0.072\textheight]{"res/dists/2_t_5"}&
+    \includegraphics[width=0.18\textwidth, height=0.072\textheight]{"res/dists/2_t_10"}&
+    \includegraphics[width=0.18\textwidth, height=0.072\textheight]{"res/dists/2_t_15"} \\
+    \addlinespace[-0.5ex]
+    \includegraphics[width=0.18\textwidth, height=0.072\textheight]{"res/dists/3_gt"}&
+    \includegraphics[width=0.18\textwidth, height=0.072\textheight]{"res/dists/3_t_5"}&
+    \includegraphics[width=0.18\textwidth, height=0.072\textheight]{"res/dists/3_t_10"}&
+    \includegraphics[width=0.18\textwidth, height=0.072\textheight]{"res/dists/3_t_15"} \\
+    
+    
+
+\bottomrule
+\end{tabular}
+}
+\caption{\textbf{Rows 1-3}: Point estimates. \textcolor{black}{Blue}: Ground-truth, \textcolor{black}{Red}: Kalman Filter (\autoref{tab:stream1eval} row 1), \textcolor{black}{Yellow}: One-stream model (\autoref{tab:stream1eval} row 4), \textcolor{black}{Green}: Two-stream model (mean of predictive distribution, \autoref{tab:bothstreameval} row 3). \textbf{Rows 4-6:} Predictive distributions of our two-stream model as heat maps. (Video results in suppmat). }\label{fig:uncertianityq}
+\end{figure*}
+%\emph{Row 1}: Case with linear vehicle ego-motion, all methods perform reasonably well. \emph{Rows 2 and 3}: cases with non-linear vehicle ego-motion, our two-stream model outperforms other methods.
+%
+
+\myparagraph{Evaluation of our Two-Stream model.}  We perform an ablation study of our two-stream model (\autoref{fig:modelarch}) and compare with a single-stream Bayesian LSTM encoder-decoder model where the encoder observes the concatenated past bounding box and velocity sequence $\left\{ \text{B}_{\text{p}}, \text{O}_{\text{p}}\right\}$ and the decoder predicts the future bounding box sequence $\text{B}_{\text{f}}$. This model does not see predicted future odometry. We evaluate the models and report the results in \autoref{tab:bothstreameval} and plot the MSE per time-step \autoref{tab:perstepmse}. The results show that jointly predicting odometry with pedestrian bounding boxes (3rd row) significantly improves performance (2nd row). The predicted odometry helps our two-stream model recover a significant fraction of the performance of the Oracle case in \autoref{tab:stream1eval} row 5. The limiting factor here is that the odometry is difficult to predict in certain situations e.g. at T-intersections. Apart from cases with inaccurate odometry prediction, the residual error of our two-stream (and the Oracle case) on a large part is due to the noise of the pedestrian detector and tracker failures. We show qualitative examples in \autoref{fig:uncertianityq}. Row 1 shows point estimates under linear vehicle ego-motion and Rows 2, 3 non-linear vehicle ego-motion. Our two-stream model (mean of predictive distribution) outperforms other methods in the second case. Rows 4-5 shows the predictive distributions of the two-stream model under linear vehicle and pedestrian motion. The distribution is symmetric and has high aleatoric uncertainty which captures detection noise and possible pedestrian motion. Row 6 shows a case of a skewed distribution with high epistemic uncertainty which captures uncertainty in vehicle motion.
+
+\myparagraph{Quality of our Uncertainty Metric.} We evaluate our uncertainty metric in \autoref{fig:uncertinitymetric}. The first two plots show the aleatoric and epistemic uncertainty to the squared error of the mean of the predictive distribution of our two-stream model. We use $\log$-$\log$ plots for better visualization as most sequences have low error (note, $\log(530) \approx 6.22$ the MSE of our two stream model, \autoref{tab:bothstreameval}). We see that the epistemic and aleatoric uncertainties are correlates well with the squared error. This means that for sequences where the mean of our predictive distribution is far from the true future sequence, our predictive distribution has a high variance (and vice versa). Therefore, for sequences with multiple likely futures, where the mean estimate would have high error, our model learns to predict diverse futures. In the third plot of \autoref{fig:uncertinitymetric}, we plot the \emph{maximum} $\log$ squared error (of the mean of the predictive distribution) observed at a certain predicted uncertainty level (sum of aleatoric and epistemic) in the test test. In the fourth plot, we plot the uncertainty with the maximum observed squared error at time-steps $t + \left\{5,10,15\right\}$. In both cases, uncertainty and observed maximum error is well correlated. This shows that, \emph{the predicted uncertainty upper bounds the error of the mean of the predictive distribution}. Therefore, the predicted uncertainty helps us express trust in predictions and has the potential to serve as a basis for better decision making. 

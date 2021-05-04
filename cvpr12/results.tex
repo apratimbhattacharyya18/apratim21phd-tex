@@ -1,0 +1,131 @@
+%\subsection{Experimental setup}
+\input{cvpr12/experimentalSetup}
+\subsection{Classification results}
+\label{sec:cvpr12:results:cls}
+
+\newcommand{\midruleClsResults}{\cmidrule(lr){1-1}  \cmidrule(lr){2-3} \cmidrule(lr){4-4}}
+
+\begin{table}
+\begin{center}
+% \begin{scriptsize} 
+\begin{tabular}{l  r@{\ \ }r r}
+\toprule   & \multicolumn{2}{c}{Multi-class}  & \multicolumn{1}{c}{per class} \\ Approach&Precision&Recall&AP\\
+\midruleClsResults
+\multicolumn{4}{l}{\textbf{Pose-based approaches}}\\
+BM       & 22.1  & 21.8  & 27.4  \\
+FFT      & 23.4  & 22.4  & 30.4  \\
+Combined & \textbf{28.6}  & \textbf{28.7}  & \textbf{34.6}  \\\midruleClsResults
+\multicolumn{4}{l}{\textbf{Holistic approaches}}\\
+Trajectory&35.4  & 33.3  & 42.0  \\
+HOG      & 39.9  & 34.0  & 52.9  \\
+HOF      & 43.3  & 38.1  & 53.4  \\
+MBH      & 44.6  & 40.5  & 52.0  \\
+Combined & \textbf{49.4}  & \textbf{44.8}  & \textbf{59.2}  \\
+\midruleClsResults
+\textbf{Pose + Holistic}  & \textbf{50.4}  & \textbf{45.1}  & 57.9  \\
+ \bottomrule \end{tabular}
+% \end{scriptsize} 
+\end{center}
+\caption[Classification results on MPII Cooking Activities]{Classification results on MPII Cooking Activities,  in \% (see \secref{sec:cvpr12:results:cls})}
+\label{tbl:cvpr12:ClassResults}
+\end{table}  
+
+
+%\begin{figure}[htp]
+%\begin{center}
+%  \includegraphics[width=0.48\textwidth]{confMatMultiClassClassificationbmfftdenseTrack}
+%  \caption{Classification: confusion matrix of pose + holistic}
+%  \label{fig:cvpr12:confmat:all}
+%\end{center}
+%\end{figure}
+
+
+\tableref{tbl:cvpr12:ClassResults} summarizes the classification results. The first section of the table shows results for the approaches based on the articulated pose model (see \secref{sec:cvpr12:approach:pose}), while the second section shows results of the state-of-the-art holistic dense trajectories~\citep{wang11cvpr} feature representation (see \secref{sec:cvpr12:approach:holistic}).
+%
+Overall we achieve a mean multi-class recall or accuracy (\tableref{tbl:cvpr12:ClassResults}, second last column), between 21.8\% and 45.1\% which should be 
+compared to chance level of 1.6\% for the 64 classes (we exclude the background class for classification).
+
+We first examine the pose-based approaches. The body model features on the joint tracks (BM)  achieve a multi-class precision (Pr) of 22.1\%, a recall (Rc) of 21.8\% and a mean average precision (AP) of 27.4\%. When comparing this to the FFT features, we observe that FFT performs slightly better, improving over BM regarding Pr, Rc, and AP by 1.3\%, 0.6\%, and 3.0\%%\footnote{We always report percentage points rather than relative percentages.}
+, respectively.  Combining BM and FFT features using stacking (\tableref{tbl:cvpr12:ClassResults}, line 3) yields a significant improvement, reaching 28.6\% Pr, 28.7\% Rc, and 34.6\% AP. We attribute this to the complementary information encoded in the features: While BM encode among others velocity-histograms of the joint-tracks and statistics between tracks of different joints, FFT features encode FFT coefficients of individual joints. 
+% We conclude more work is required to compute
+% robust features for joint trajectories.
+ 
+Next we compare the results of the holistic approaches (Sec. 2, \tableref{tbl:cvpr12:ClassResults})  based on  dense trajectories~\citep{wang11cvpr}. Trajectory has the lowest performance with 35.4\%~Pr, 33.3\%~Rc, and 42.0\% AP. In line with results reported by \citet{wang11cvpr} for other datasets HOG, HOF, and motion boundary histograms (MBH) improve over this performance.  MBH achieves 44.6\%~Pr, 40.5\%~Rc, and 52.0\% AP. 
+% The superior performance of MBH is in line with results reported by~\citet{wang11cvpr} for other datasets. 
+Combining all holistic approaches again significantly improves performance by more than 4\% to 49.4\% Pr, 44.8\% Rc and 59.2\% AP. 
+
+It is interesting to note that the pose-based approaches achieve significantly lower performance than the holistic approaches. 
+% We conclude more work is required to compute robust features for joint trajectories.
+%
+%Finally we compare the combinations of pose-based approaches and holistic approaches. We observe that the combined holistic approach doubles precision and recall of the pose-based combination and increases AP by 5\%. This denotes that the pose-based approaches have especially problems with discriminating themselfs to other activities.
+This may be attributed to the rather sparse joint trajectories of the pose-based approach, while the holistic approach benefits from HOF, HOG, and MBH features around the dense tracks. Additionally we found that pose-estimation does not always give correct results, 
+especially for non-frontal poses or self-occlusion, making the resulting tracks and features fail.
+
+A low-level combination of pose and holistic approaches (\tableref{tbl:cvpr12:ClassResults}, last line)  shows slight improvement over the holistic approach (\tableref{tbl:cvpr12:ClassResults}, second last line). % by 4.8\% Pr, 0.9\% Rc, and 4.3\% AP. This suggests that both features contain complementary information. 
+We achieve 50.4\% multi-class  precision, 45.1\% multi-class recall (or accuracy), and 57.9\% AP (slightly dropped). Although we believe this is an encouraging first result, it shows that fine-grained activity recognition is indeed difficult.
+%lot of challenges remain for future work on fine-grained activity recognition.
+
+A more detailed class level evaluation based on the confusion matrix (not shown) reveals that fine-grained activities with low inter-class variability are highly confused (\eg different \emph{cut} activities) 
+while less fine-grained activities such as \emph{wash objects} 
+or \emph{take out from drawer} are hardly confused. 
+This underlines the difficulty of fine-grained activity recognition \vs full- or upper-body activities. 
+
+Examining the intermediate representation of 2D tracks we found that the tracks for fine-grained activities \emph{peel} \vs \emph{cut slices} (\figref{fig:cvpr12:tracks}, first column) can distinguish fine-grained movements (sideways hand movement \vs vertical movement) highlighting the potential benefit of using body-pose features.
+
+
+\subsection{Detection results}
+\label{sec:cvpr12:results:det}
+
+\begin{table}
+\begin{center}
+% \begin{scriptsize} 
+\begin{tabular}{l  r@{\ \ }r r}
+\toprule   & \multicolumn{2}{c}{Multi-class}  & \multicolumn{1}{c}{per class} \\ 
+Approach&Precision&Recall&AP\\
+\midruleClsResults
+\multicolumn{4}{l}{\textbf{Pose-based approaches}}\\
+BM       & 6.7   & 16.1  & 13.0  \\
+FFT      & 6.3   & 18.3  & 15.0  \\
+Combined & \textbf{8.6}   & \textbf{21.3}  & \textbf{17.7}  \\
+\midruleClsResults
+\multicolumn{4}{l}{\textbf{Holistic approaches}}\\
+Trajectory& 10.7  & 25.2  & 28.4  \\
+HOG       & 15.0  & 32.2  & 35.5  \\
+HOF       & 15.1  & 29.9  & 36.1  \\
+MBH       & 16.2  & 37.7  & 39.6  \\
+Combined  & \textbf{17.7}  & \textbf{40.3}  & \textbf{44.2}  \\\midruleClsResults
+\textbf{Pose + Holistic}  & \textbf{19.8}  & 40.2  & \textbf{45.0}  \\
+\bottomrule  \end{tabular}
+%  \end{scriptsize}
+\end{center}
+\caption[Detection results on MPII Cooking Activities]{Detection results on MPII Cooking Activities, in \% (see \secref{sec:cvpr12:results:det})}
+\label{tbl:cvpr12:DetResult}
+\end{table} 
+
+
+
+\tableref{tbl:cvpr12:DetResult} shows detection results and 
+%show results per class of the respective combined approaches in 
+\tableref{tbl:cvpr12:DetResultPerClass} results per class of the respective combined approaches. 
+%
+Overall performance ranges from the combined pose-based approaches of 17.7\% AP (8.6\% Pr, 21.3\% Rc) over 44.2\% AP (17.7\%~Pr, 40.3\% Rc) for the holistic approaches to 45.0\%~AP (19.8\% Pr, 40.2\% Rc) when combining pose-based and holistic. The improvements of the combination, similar to the classification results, underlines the complementary nature of the two approaches. Even though overall
+the performance for the detection task (\tableref{tbl:cvpr12:DetResult}) is lower than for classification (\tableref{tbl:cvpr12:ClassResults}) 
+the relative performances are similar: pose-based approaches perform below holistic approaches and combining individual approaches improves performance, respectively. 
+In all cases multi-class precision is significantly lower than recall, indicating a high number of false positives. Frequently short activity fragments score very high within other longer fragments or sometimes one ground truth label is fragmented into several shorter ones. We hope this dataset will provide a base for exploring how to best attack these multi-class activity detection challenges. 
+% The main exception is the low recall of 28.4\% when combining pose and holistic compared to the holistic approach (-10.2\%, \tableref{tbl:cvpr12:DetResult}, last two lines). This can be explained by the rather low recall of the pose-based approach partially compensated by the increase in precision to 19.8\% (+8.6\% \vs holistic).  
+
+\tableref{tbl:cvpr12:DetResultPerClass} provides detailed per-class detection results. 
+%The first column gives the activity category name and the second the total number of annotations for that class in the dataset. Columns 3 to 5 provide AP results for the combined pose-based, holistic, and pose + holistic approaches. The last two columns additionally provide multi-class precision and recall for the combination of the pose + holistic approach. 
+We note a general trend when examining the combined pose + holistic approach (\tableref{tbl:cvpr12:DetResultPerClass}, column 5): 
+% First, activity classes with higher number of total annotations tend to perform better than similar activities with lower number of annotations, \eg \emph{take out from drawer} with 237 annotations achieves 70.2\% AP (pose + holistic) \vs 37.2\% AP for \emph{take out from fridge} with 63 annotations. A similar observation holds for \emph{cut apart} (120 annotations, 24.5\% AP) \vs \emph{cut dice} (90 annotations, 7.3\% AP) \vs \emph{cut off ends} (42 annotations, 2.7\% AP). This is an expected property but also shows the difficulties of this dataset, which is very unbalanced. This unbalanced nature however is always true for realistic recordings but not covered in many activity databases that are partly staged or designed to be balanced.
+% in the number of categories due to being realistic recordings rather than picket categories.
+% These examples already show the second general trend: 
+Fine-grained activities such as \emph{cut apart} (15.7\% AP), \emph{screw close} (31.2\% AP), or \emph{stir} (52.2\% AP) tend to achieve lower performance than less fine-grained activities such as \emph{dry} (94.8\% AP), \emph{take out from fridge} (75.5\% AP) or \emph{wash objects} (72.2\% AP). 
+This underlines our assumption that fine-grained activities are very challenging, which seem to be neglected in many other dataset.
+
+% Third, we find that in many cases the combination of pose + holistic improves compared to holistic alone for very fine-grained activities (\eg \emph{cut dice}: +0.4\%, \emph{grate}: +4.4\%, \emph{open egg}: +1.1\%) in contrast to less fine-grained activities where it does not increase much or might even decrease  (\emph{open/close cupboard}: -0.9\%, \emph{take out from drawer}: -10.2\%, \emph{take out from fridge}: -5.4\%). In some cases pose alone even performs better than the holistic approach (\emph{cut out inside}: +2.2\%, \emph{spice}: +0.3\%, \emph{strew}: +2.3\%). Although there are counter-examples (\eg \emph{cut stripes}: -0.7\%) we believe this suggests that body pose is an important cue for fine grained activity recognition.    
+
+
+% 
+% \renewcommand{\topfraction}{1}
+% \renewcommand{\textfraction}{0}
