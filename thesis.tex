@@ -1,0 +1,117 @@
+\documentclass[12pt,a4paper,twoside]{diss}
+
+% \chapter, \subsection...: no additional code
+\include{packages}
+\include{defines}
+ 
+% Michael
+\input{macros}
+
+
+ \graphicspath{{./fig/}{./aaai18/images/}{./cvpr18_2/images/}{./iccv13/fig/}{./nips13/}{./nips13/fig/}{./eccv12/fig/}{./tacl13/}{./cvpr12/}{./cvpr12/fig/}{./bmvc13/}{./cvpr11/figures/}}
+%\includeonly{title,abstract,acknowledgements,introduction,related,cvpr10,conclusions}%,publications,cv}
+
+\hyphenation{know-ledge re-lated-ness dis-cri-mi-na-ting}
+
+\begin{document}
+\pagenumbering{roman}
+\hypertarget{title}{}
+\pdfbookmark[0]{Title Page}{title}
+\include{title}
+\cleardoublepage
+
+\hypertarget{abstract}{}
+\pdfbookmark[0]{Abstract}{abstract}
+\include{abstract}
+\cleardoublepage
+
+\hypertarget{zusammenfassung}{}
+\pdfbookmark[0]{Zusammenfassung}{zusammenfassung}
+\include{zusammenfassung}
+\cleardoublepage
+
+% \hypertarget{acknowledgements}{}
+% \pdfbookmark[0]{Acknowledgements}{acknowledgements}
+%\include{acknowledgements}
+% \cleardoublepage
+
+%% -------------------------------------------------------------------------
+%% Table of contents 
+%% -------------------------------------------------------------------------
+\dominitoc
+\hypertarget{toc}{}
+\pdfbookmark[0]{\contentsname}{toc}
+\tableofcontents
+\clearoddpage  
+
+\pagenumbering{arabic}
+
+\include{introduction}
+\cleardoublepage
+
+\include{related}
+\cleardoublepage
+
+\include{aaai18}
+\cleardoublepage
+
+\include{cvpr18_2}
+\cleardoublepage
+
+\include{conclusions}
+\cleardoublepage
+
+% 
+% -------------------------------------------------------------------------
+% List of figures
+% -------------------------------------------------------------------------
+\phantomsection
+\addcontentsline{toc}{chapter}{\numberline{}\listfigurename}
+\setcounter{lofdepth}{2}
+\listoffigures
+\clearoddpage 
+
+% -------------------------------------------------------------------------
+% List of tables
+% -------------------------------------------------------------------------
+\phantomsection
+\addcontentsline{toc}{chapter}{\numberline{}\listtablename}
+\setcounter{lotdepth}{2}
+\listoftables
+\clearoddpage
+
+
+% -------------------------------------------------------------------------
+% Generate an index
+% -------------------------------------------------------------------------
+%\printindex
+% \addcontentsline{toc}{chapter}{\numberline{}Index}
+% \printindex
+
+% -------------------------------------------------------------------------
+% Generate the biblioraphy
+% -------------------------------------------------------------------------
+%\bibliographystyle{plain}
+%\bibliography{DAGM08_Eval/detectoreval,DAGM08_GPU/image,CVPR09_Motion/bibliography,ECCV08/crfandobjects,CVPR10/cvpr2010-christian}
+\phantomsection
+\addcontentsline{toc}{chapter}{\numberline{}\bibname} %% see book p. 176
+\bibliography{combbiblio,apratim}
+% thesis 
+\cleardoublepage
+
+%% -------------------------------------------------------------------------
+%% Curriculum Vitae
+%% -------------------------------------------------------------------------
+%\include{cv}
+% \cleardoublepage
+%\include{publications}
+%
+\phantomsection
+\addcontentsline{toc}{chapter}{\numberline{}{Curriculum Vitae}}   %% see book p. 176
+\include{cv}
+\cleardoublepage
+ 
+\phantomsection
+\addcontentsline{toc}{chapter}{\numberline{}Publications}
+\include{publications}
+\end{document}

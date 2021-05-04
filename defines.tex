@@ -1,0 +1,315 @@
+%
+% Page style, TOC etc
+%
+\setcounter{tocdepth}{2}
+\makeatletter\@removefromreset{footnote}{chapter}\makeatother
+%
+% Hyperref config
+%
+\hypersetup{	 
+     colorlinks = false,
+     linkcolor = red,
+     anchorcolor = red,
+     citecolor = blue,
+     filecolor = red,
+     pagecolor = red,
+     urlcolor = red	 
+}
+
+
+\hypersetup{
+    pdftitle =
+        Combining Visual Recognition and Computational Linguistics,
+    pdfauthor =
+        Marcus Rohrbach,
+    pdfsubject=
+        PhD Thesis,
+%    pdfkeywords =
+%        {{Pedestrian Detection},{Object Recognition},{Scene Understanding},{Segmentation},{Computer Vision},{Probabilistic Modeling},{Conditional Random Fields},{CRFs},{MCMC}}
+}
+
+
+
+
+%
+% Own commands
+%
+\selectlanguage{american}
+\newcommand{\mpage}[2]{\begin{minipage}{#1}\vspace{3pt}#2\vspace{3pt}\end{minipage}}
+\newcommand{\tmpage}[2]{\begin{minipage}{#1}\vspace{0.5pt}#2\vspace{0.5pt}\end{minipage}}
+
+\newlength{\vfigcaplen}
+\setlength{\vfigcaplen}{-.4cm}
+\newlength{\vtblcaplen}
+\setlength{\vtblcaplen}{0cm}
+
+\newcommand{\vfigcap}[1]{\vspace*{\vfigcaplen}\caption{#1}}
+\newcommand{\vtblcap}[1]{\vspace*{\vtblcaplen}\caption{#1}}
+\newcommand{\inserttbl}[1]{\input{#1}}
+
+%\def\ea{\xspace\emph{et~al.}\xspace}
+%\def\FPPW{\textsc{fppw}\xspace}
+\def\bigo{\ensuremath{\mathcal{O}}}
+\def\Ltwo{\ensuremath{\mathrm{L}_2}\xspace}
+
+\newcolumntype{C}{>{$}c<{$}}
+
+
+ %\usepackage[labelsep=period,font=small,skip=0pt]{caption}
+
+ % cvpr crap
+ %\usepackage[pagebackref=true,breaklinks=true,letterpaper=true,colorlinks,bookmarks=false]{hyperref}
+ %\cvprfinalcopy
+ %\def\cvprPaperID{1454}
+ \def\httilde{\mbox{\tt\raisebox{-.5ex}{\symbol{126}}}}
+% \ifcvprfinal\pagestyle{empty}\fi
+
+ % Add a period to the end of an abbreviation unless there's one
+ \makeatletter
+ \DeclareRobustCommand\onedot{\futurelet\@let@token\@onedot}
+ \def\@onedot{\ifx\@let@token.\else.\null\fi\xspace}
+ \def\eg{e.g\onedot} \def\Eg{E.g\onedot}
+ \def\ie{i.e\onedot} \def\Ie{I.e\onedot}
+ \def\cf{cf\onedot} \def\Cf{Cf\onedot}
+ \def\etc{etc\onedot} \def\vs{vs\onedot}
+ \def\wrt{w.r.t\onedot} \def\dof{d.o.f\onedot}
+ \def\etal{\textit{et~al\onedot}} \def\iid{i.i.d\onedot}
+ \def\Fig{Fig\onedot} \def\Eqn{Eqn\onedot} \def\Sec{Sec\onedot}
+ \def\vs{vs\onedot}
+ \makeatother
+
+% to conform Springer (do not change it!)
+\DeclareRobustCommand{\figref}[1]{Figure~\ref{#1}}
+\DeclareRobustCommand{\figsref}[1]{Figures~\ref{#1}}
+
+\DeclareRobustCommand{\Figref}[1]{Figure~\ref{#1}}
+\DeclareRobustCommand{\Figsref}[1]{Figures~\ref{#1}}
+
+\DeclareRobustCommand{\Secref}[1]{Section~\ref{#1}}
+\DeclareRobustCommand{\secref}[1]{Section~\ref{#1}}
+
+\DeclareRobustCommand{\Secsref}[1]{Sections~\ref{#1}}
+\DeclareRobustCommand{\secsref}[1]{Sections~\ref{#1}}
+
+\DeclareRobustCommand{\Tableref}[1]{Table~\ref{#1}}
+\DeclareRobustCommand{\tableref}[1]{Table~\ref{#1}}
+
+\DeclareRobustCommand{\Tablesref}[1]{Tables~\ref{#1}}
+\DeclareRobustCommand{\tablesref}[1]{Tables~\ref{#1}}
+
+\DeclareRobustCommand{\eqnref}[1]{Equation~(\ref{#1})}
+\DeclareRobustCommand{\Eqnref}[1]{Equation~(\ref{#1})}
+
+\DeclareRobustCommand{\eqnsref}[1]{Equations~(\ref{#1})}
+\DeclareRobustCommand{\Eqnsref}[1]{Equations~(\ref{#1})}
+
+\DeclareRobustCommand{\chapref}[1]{Chapter~\ref{#1}}
+\DeclareRobustCommand{\Chapref}[1]{Chapter~\ref{#1}}
+
+\DeclareRobustCommand{\chapsref}[1]{Chapters~\ref{#1}}
+\DeclareRobustCommand{\Chapsref}[1]{Chapters~\ref{#1}}
+
+
+ % itemize without all the whitespace
+ \newenvironment{itemize1}{
+ \begin{itemize}
+   \setlength{\itemsep}{1pt}
+   \setlength{\parskip}{0pt}
+   \setlength{\parsep}{0pt}
+ }{\end{itemize}}
+
+ % useful abbreviations
+ \newcommand{\fixme}[1]{\textcolor{red}{\textbf{FiXme}#1}\xspace}
+ \newcommand{\hobs}{\textrm{h}_\textrm{obs}}
+ \newcommand{\cpad}[1]{@{\hspace{#1mm}}}
+ \newcommand{\alg}[1]{\textsc{#1}}
+
+ \newcommand{\fnrot}[2]{\scriptsize\rotatebox{90}{\begin{minipage}{#1}\flushleft #2\end{minipage}}}
+ \newcommand{\chmrk}{{\centering\ding{51}}}
+ \newcommand{\eqn}[1]{\begin{eqnarray}\vspace{-1mm}#1\vspace{-1mm}\end{eqnarray}}
+ \newcommand{\eqns}[1]{\begin{eqnarray*}\vspace{-1mm}#1\vspace{-1mm}\end{eqnarray*}}
+
+% \setlength{\topskip}{0mm}
+ \setlength{\abovecaptionskip}{3mm}
+ \setlength{\belowcaptionskip}{3mm}
+ \setlength{\textfloatsep}{5mm}
+
+% Disable single lines at the start of a paragraph
+%\clubpenalty = 10000
+%
+% Disable single lines at the end of a paragraph
+%\widowpenalty = 10000 \displaywidowpenalty = 10000
+
+\hyphenation{po-si-tive}
+\hyphenation{Loe-wen-platz}
+\newcommand{\anonymize}[1]{\ifcvprfinal{#1}\else{[anonymized]}\fi}
+\newcommand{\tvl}{TV-$L_1$}
+\newcommand{\rz}[1]{\raisebox{6.0ex}[-7.ex]{\small{#1}}}
+\newcommand{\rzeccv}[1]{\raisebox{7.5ex}[-0.ex]{\small{#1}}}
+\newlength{\cwCropWidth}
+
+\newlength{\cwRoc}
+
+\newcolumntype{I}[1]{>{\centering\arraybackslash}p{#1}} % zentrierte Spalten mit Breitenangabe 
+\newcolumntype{O}[1]{>{\raggedleft\arraybackslash}p{#1}} % rechtsbündig mit Breitenangabe 
+
+\renewcommand{\chapterautorefname}{Chapter}
+\newcommand{\myparagraph}[1]{
+\vspace{0.1cm}\noindent
+\textbf{#1}
+\hspace{0.1cm}
+}
+
+%
+% Definition for row label counters (useful for ECCV kind of style)
+%
+% (a) ...
+% (b) ...
+% (c) ...
+%
+
+\usepackage{ifthen}
+\makeatletter
+
+%ds
+\newcounter{rownods}
+\providecommand{\rownods}[1][__empty__]{%
+\ifthenelse{\equal{#1}{__empty__}}{%
+}{%
+\setcounter{rownods}{#1}%
+\addtocounter{rownods}{-1}%
+}%
+\renewcommand*\therownods{(\@alph\c@rownods)}
+\renewcommand*\theHrownods{(\@alph\c@rownods)}
+\refstepcounter{rownods}%
+\therownods
+}
+
+%ds2
+\newcounter{rownodsb}
+\providecommand{\rownodsb}[1][__empty__]{%
+\ifthenelse{\equal{#1}{__empty__}}{%
+}{%
+\setcounter{rownodsb}{#1}%
+\addtocounter{rownodsb}{-1}%
+}%
+\renewcommand*\therownodsb{(\@alph\c@rownodsb)}
+\renewcommand*\theHrownodsb{(\@alph\c@rownodsb)}
+\refstepcounter{rownodsb}%
+\therownodsb
+}
+
+%teas
+\newcounter{rownoteas}
+\providecommand{\rownoteas}[1][__empty__]{%
+\ifthenelse{\equal{#1}{__empty__}}{%
+}{%
+\setcounter{rownoteas}{#1}%
+\addtocounter{rownoteas}{-1}%
+}%
+\renewcommand*\therownoteas{(\@alph\c@rownoteas)}
+\renewcommand*\theHrownoteas{(\@alph\c@rownoteas)}
+\refstepcounter{rownoteas}%
+\therownoteas
+}
+
+%ped
+\newcounter{rownoped}
+\providecommand{\rownoped}[1][__empty__]{%
+\ifthenelse{\equal{#1}{__empty__}}{%
+}{%
+\setcounter{rownoped}{#1}%
+\addtocounter{rownoped}{-1}%
+}%
+\renewcommand*\therownoped{(\@alph\c@rownoped)}
+\renewcommand*\theHrownoped{(\@alph\c@rownoped)}
+\refstepcounter{rownoped}%
+\therownoped
+}
+
+%ct
+\newcounter{rownoct}
+\providecommand{\rownoct}[1][__empty__]{%
+\ifthenelse{\equal{#1}{__empty__}}{%
+}{%
+\setcounter{rownoct}{#1}%
+\addtocounter{rownoct}{-1}%
+}%
+\renewcommand*\therownoct{(\@alph\c@rownoct)}
+\renewcommand*\theHrownoct{(\@alph\c@rownoct)}
+\refstepcounter{rownoct}%
+\therownoct
+}
+
+%fp
+\newcounter{rownofp}
+\providecommand{\rownofp}[1][__empty__]{%
+\ifthenelse{\equal{#1}{__empty__}}{%
+}{%
+\setcounter{rownofp}{#1}%
+\addtocounter{rownofp}{-1}%
+}%
+\renewcommand*\therownofp{(\@alph\c@rownofp)}
+\renewcommand*\theHrownofp{(\@alph\c@rownofp)}
+\refstepcounter{rownofp}%
+\therownofp
+}
+\makeatother
+
+\makeatletter
+\long\def\@footnotetext#1{%
+      \H@@footnotetext{%
+        \ifHy@nesting
+         \hyper@@anchor{\@currentHref}{#1}%
+       \else
+         \Hy@raisedlink{\hyper@@anchor{\@currentHref}{\relax}}#1%
+       \fi
+     }}
+
+
+  \def\@footnotemark{%
+     \leavevmode
+     \ifhmode\edef\@x@sf{\the\spacefactor}\nobreak\fi
+     \H@refstepcounter{Hfootnote}%
+     \hyper@makecurrent{Hfootnote}%
+     \hyper@linkstart{link}{\@currentHref}%
+     \@makefnmark
+     \hyper@linkend
+     \ifhmode\spacefactor\@x@sf\fi
+     \relax
+   }%
+
+ \ifFN@multiplefootnote%
+     \renewcommand*\@footnotemark{%
+      \leavevmode
+      \ifhmode
+        \edef\@x@sf{\the\spacefactor}%
+        \FN@mf@check
+        \nobreak
+      \fi
+      \H@refstepcounter{Hfootnote}%
+      \hyper@makecurrent{Hfootnote}%
+      \hyper@linkstart{link}{\@currentHref}%
+      \@makefnmark
+      \hyper@linkend
+      \ifFN@pp@towrite
+        \FN@pp@writetemp
+        \FN@pp@towritefalse
+      \fi
+      \FN@mf@prepare
+      \ifhmode\spacefactor\@x@sf\fi
+      \relax%
+    }%
+ \fi
+\makeatother
+
+
+\makeatletter
+\renewcommand{\@chapapp}{}% Not necessary...
+\newenvironment{chapquote}[2][2em]
+  {\setlength{\@tempdima}{#1}%
+   \def\chapquote@author{#2}%
+   \parshape 1 \@tempdima \dimexpr\textwidth-2\@tempdima\relax%
+   \itshape}
+  {\par\normalfont\hfill--\ \chapquote@author\hspace*{\@tempdima}\par\bigskip}
+\makeatother

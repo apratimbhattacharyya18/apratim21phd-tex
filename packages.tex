@@ -1,0 +1,64 @@
+% marcus
+% \usepackage{caption}
+% \usepackage{subcaption}
+
+
+\usepackage[multiple]{footmisc}
+ \usepackage[subfigure,eulermath]{classicthesis_cw}
+% \usepackage[eulermath]{classicthesis_cw}
+% \usepackage[subfigure]{classicthesis_cw}
+\usepackage[center]{subfigure}
+% \usepackage{graphics}
+\usepackage{ucs}
+\usepackage[utf8x]{inputenc}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage[english,american]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{wrapfig} 
+\usepackage{pifont}
+\usepackage{natbib}
+\usepackage{wrapfig}
+\usepackage{xspace}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{multicol}
+\usepackage{multirow}
+\usepackage{captcont}
+\usepackage{colortbl}
+\usepackage{lettrine}
+\usepackage{nameref}
+\usepackage[pdftex,pageanchor=true,bookmarks=true,bookmarksnumbered=true,backref=page,hyperindex=true]{hyperref}
+\usepackage{remreset}
+\usepackage{longtable}
+\usepackage{soul} 
+\usepackage[tight]{minitoc}
+\usepackage[inline]{enumitem}
+\usepackage{mwe}
+\usepackage{verbatimbox}
+
+% CVPR2010
+\usepackage{epsfig}
+\usepackage{rotating}
+\usepackage[all]{xy}
+\usepackage{arydshln} % make dashed lines
+
+\RequirePackage[hyperpageref]{backref} 
+   \renewcommand*{\backref}[1]{}  
+   \renewcommand*{\backrefalt}[4]{
+      \ifcase #1 
+         No cited.
+      \or
+         Cited on page #2.
+      \else
+         Cited on pages #2.
+      \fi}
+
+% \usepackage{etoolbox}
+% \makeatletter
+% \patchcmd{\BR@backref}{\newblock}{\newblock(cited on page(s)~}{}{}
+% \patchcmd{\BR@backref}{\par}{)\par}{}{}
+% \makeatother

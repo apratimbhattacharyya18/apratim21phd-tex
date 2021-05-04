@@ -1,0 +1,21 @@
+\thispagestyle{plain}
+\chapter*{\Huge Abstract} 
+Extensive efforts are being made to scale visual recognition to a large number of object categories and diverse human activities. At the same time natural language processing is developing sophisticated tools for extracting semantic similarity from text corpora or automatically translating between different languages.
+However, surprisingly little has been done to exploit the mutual benefits of combining both fields. In this thesis we show how the different fields of research can profit from each other and how to generate natural language descriptions for visual input. More specifically we concentrate on the following five aspects.
+
+First, we mine linguistic knowledge from a diverse set of language resources to improve visual object recognition. More specifically, we transfer knowledge from a set of known classes to a set of unseen classes using an intermediate level of semantic attributes or use direct similarity between the classes. We mine the required class-attribute or direct similarity associations using different semantic relatedness measures computed on linguistic knowledge bases. On the one hand we show how to make these measures robust so they can replace manually defined relations. On the other hand we scale recognition to 200 unseen object classes.
+
+Second, we capture the high variability but low availability of composite activity videos by extracting the essential information from  
+text descriptions. For this we recorded and annotated a corpus of cooking videos for fine-grained activity recognition. Independently we collected a large set of descriptions for the different cooking activities.   
+ We found that these descriptions can successfully capture the high variability of composite cooking activities. We show improvements in a supervised case where training data for all composite cooking tasks is available, but we are also able to recognize unseen composites by just using the descriptions without any manual video annotation. 
+On the visual recognition side, we compare two approaches, a holistic and pose based approach. 
+
+Third, we extend our models for visual knowledge transfer from zero-shot to few shot recognition. We realize this extension by adopting label propagation -- previously only used for semi-supervised learning -- for transfer learning. We show that our proposed approach \emph{Propagated Semantic Transfer} also improves zero-shot recognition for objects and activities.
+
+Fourth, we explore how visual information can aid natural language processing by looking at the problem of grounding sentences in video. More specifically we align sentences describing an activity with the respective video snippets. To estimate the similarity between two sentences we compare two text-based models of similarity and two based on visual information. Combining the text-based model and visual similarity significantly improves over using them individually.
+
+Finally, we generate natural language descriptions for visual content. For this we propose a two-step approach. As the first step we generate a rich semantic representation of the visual content including  object and activity labels.  
+
+For the second step we propose to formulate the generation of natural language as a machine translation problem using the semantic representation as source language and the generated sentences as target language. For this we exploit the power of a parallel corpus of videos and textual descriptions and adapt statistical machine translation to translate between our two languages. Using automatic evaluation and human judgments we show significant improvements over several baseline approaches, motivated by prior work. Our translation approach also shows improvements over related work on an image description task.
+
+In summary, this thesis shows how object and activity recognition can benefit from automatically extracting knowledge from linguistic resources and text description. We achieve performance on par with manually defined associations for recognizing unseen object classes and capture the variability from limited training data for composite activities. Finally we show that we can learn from an aligned corpus of visual data and text descriptions how to generate natural language descriptions for videos and images.
